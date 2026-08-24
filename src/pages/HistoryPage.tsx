@@ -52,8 +52,9 @@ export function HistoryPage({ store, nav }: PageProps) {
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-bold">{s.name}</span>
-                <span className="block text-xs capitalize text-muted-foreground">
-                  {relativeDay(s.startedAt)} · {formatTime(s.startedAt)}
+                <span className="block text-xs text-muted-foreground">
+                  <span className="capitalize">{relativeDay(s.startedAt)}</span>{" "}
+                  · {formatTime(s.startedAt)}
                   {s.finishedAt
                     ? ` · ${duration(s.startedAt, s.finishedAt)}`
                     : ""}

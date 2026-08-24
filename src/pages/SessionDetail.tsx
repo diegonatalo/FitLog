@@ -55,9 +55,11 @@ export function SessionDetail({ store, sessionId }: SessionDetailProps) {
         />
       </div>
 
-      <p className="mb-4 flex items-center gap-1.5 text-sm capitalize text-muted-foreground">
+      <p className="mb-4 flex items-center gap-1.5 text-sm text-muted-foreground">
         <ClockCounterClockwiseIcon size={16} weight="bold" />
-        {relativeDay(session.startedAt)} · {formatTime(session.startedAt)}
+        <span className="capitalize">
+          {relativeDay(session.startedAt)}
+        </span> · {formatTime(session.startedAt)}
       </p>
 
       {Object.keys(groups).length === 0 ? (

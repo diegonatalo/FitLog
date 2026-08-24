@@ -61,7 +61,7 @@ export function LibraryPage({ store, nav }: PageProps) {
             )}
           </div>
 
-          <div className="-mx-4 mb-4 flex gap-2 overflow-x-auto px-4 pb-1 scrollbar-none [&::-webkit-scrollbar]:hidden">
+          <div className="-mx-4 mb-4 flex gap-2 overflow-x-auto px-4 pb-1 scrollbar-none [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:overflow-x-visible sm:px-0 sm:pb-0">
             <Chip
               label="Todos"
               active={filter === "all"}
