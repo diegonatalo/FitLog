@@ -1,77 +1,84 @@
-# React + TypeScript + Vite
+![Banner do projeto](./src/assets/images/github-banner.png)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# 💪🏻 FitLog
 
-Currently, two official plugins are available:
+Aplicativo de registro de treinos onde o usuário monta suas rotinas, acompanha séries, cargas e repetições em tempo real e salva tudo em um histórico organizado. A proposta é facilitar o acompanhamento da evolução física por meio de dados claros e progressão contínua.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+🔗 Acesse o projeto online:
+👉 https://dn-fitlog.vercel.app
 
-## React Compiler
+<br />
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## ✨ Funcionalidades
 
-Note: This will impact Vite dev & build performances.
+- 🏋🏻 Gestão de treinos e exercícios (criação, edição e remoção)
+- 📋 Listagem dinâmica de treinos e exercícios
+- 🔍 Filtro de exercícios por grupo muscular e busca
+- 🕑 Histórico de treinos
+- 💾 Persistência em localStorage
+- 📱 Totalmente responsivo
 
-## Expanding the ESLint configuration
+<br />
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠️ Tecnologias Utilizadas
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- ⚛️ React
+- 🟦 TypeScript
+- 🎨 Tailwind CSS
+- 🔀 React Router
+- ⚡ Vite
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+<br />
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 💻 Como Rodar o Projeto Localmente
 
+Siga os passos abaixo para executar o projeto em sua máquina:
+
+```bash
+# Clone o repositório
+git clone https://github.com/diegonatalo/fitlog.git
+
+# Acesse a pasta do projeto
+cd fitlog
+
+# Instale as dependências
+pnpm install
+
+# Inicie o servidor de desenvolvimento
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+📍 O projeto estará disponível em: http://localhost:5173
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+<br />
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🛣️ Melhorias Futuras
 
-```
+- 🖐️ Permitir organizar os treinos com drag n drop
+- ☁️ Integração com backend/API
+
+<br />
+
+## 🤝 Contribuição
+
+Contribuições são sempre bem-vindas!
+
+Para contribuir:
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/minha-feature`)
+3. Commit suas alterações (`git commit -m 'feat: minha nova feature'`)
+4. Faça push para a branch (`git push origin feature/minha-feature`)
+5. Abra um Pull Request
+
+<br />
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT.
+Sinta-se livre para usar, modificar e distribuir.
+
+<br />
+<p align="center">
+  Desenvolvido com ❤️ por <a href="https://diegonatalo.dev"><b>Diego Natalo</b></a>
+</p>
