@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
-import { PencilSimpleIcon, Trash } from "@phosphor-icons/react";
+import { PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
+import { Navigate, useNavigate, useParams } from "react-router";
 import type { LoadType } from "../types";
+import { paths } from "../lib/paths";
 import { MuscleBadge } from "../components/MuscleBadge";
 import { ExerciseForm } from "../components/ExerciseForm";
 import { LogForm } from "../components/LogForm";
@@ -8,17 +10,11 @@ import { HistoryList } from "../components/HistoryList";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import type { PageProps } from "./shared";
 
-interface ExerciseDetailProps extends PageProps {
-  exerciseId: string;
-}
-
-export function ExerciseDetail({
-  store,
-  nav,
-  exerciseId,
-}: ExerciseDetailProps) {
-  const exercise = store.exercises.find((e) => e.id === exerciseId);
-  const sets = store.setsByExercise.get(exerciseId) ?? [];
+export function ExerciseDetail({ store }: PageProps) {
+  const { id = "" } = useParams();
+  const navigate = useNavigate();
+  const exercise = store.exercises.find((e) => e.id === id);
+  const sets = store.setsByExercise.get(id) ?? [];
   const [justSaved, setJustSaved] = useState(false);
   const [editing, setEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -28,7 +24,7 @@ export function ExerciseDetail({
     return sets.reduce((max, s) => (s.load > max.load ? s : max), sets[0]);
   }, [sets]);
 
-  if (!exercise) return null;
+  if (!exercise) return <Navigate to={paths.library} replace />;
 
   const handleSave = (loadType: LoadType, load: number, reps: number) => {
     store.addSet(exercise.id, loadType, load, reps);
@@ -52,7 +48,7 @@ export function ExerciseDetail({
             aria-label="Excluir exercício"
             className="grid size-9 place-items-center rounded-lg border border-border bg-card text-muted-foreground hover:border-destructive/40 hover:text-destructive"
           >
-            <Trash size={16} />
+            <TrashIcon size={16} />
           </button>
         </div>
       </div>
@@ -97,7 +93,7 @@ export function ExerciseDetail({
           onCancelLabel="Cancelar"
           onConfirm={() => {
             store.removeExercise(exercise.id);
-            nav.pop();
+            navigate(paths.library, { replace: true });
           }}
           onCancel={() => setConfirmDelete(false)}
         />

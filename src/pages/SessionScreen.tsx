@@ -6,14 +6,14 @@ import { MuscleBadge } from "../components/MuscleBadge";
 import { LogForm } from "../components/LogForm";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { EmptyState } from "../components/EmptyState";
-import { Barbell } from "@phosphor-icons/react";
+import { BarbellIcon } from "@phosphor-icons/react";
+import { paths } from "../lib/paths";
+import { useNavigate, useParams } from "react-router";
 
-interface SessionScreenProps extends PageProps {
-  sessionId: string;
-}
-
-export function SessionScreen({ store, nav, sessionId }: SessionScreenProps) {
-  const session = store.sessions.find((s) => s.id === sessionId);
+export function SessionScreen({ store }: PageProps) {
+  const { id = "" } = useParams();
+  const navigate = useNavigate();
+  const session = store.sessions.find((s) => s.id === id);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
 
   if (!session) return null;
@@ -25,12 +25,12 @@ export function SessionScreen({ store, nav, sessionId }: SessionScreenProps) {
     .map((id) => store.exercises.find((e) => e.id === id))
     .filter((e): e is Exercise => Boolean(e));
 
-  const sessionSets = store.setsBySession.get(sessionId) ?? [];
+  const sessionSets = store.setsBySession.get(session.id) ?? [];
   const totalSets = sessionSets.length;
 
   const finish = () => {
-    store.finishSession(sessionId);
-    nav.selectTab("history");
+    store.finishSession(session.id);
+    navigate(paths.history, { replace: true });
   };
 
   return (
@@ -48,7 +48,7 @@ export function SessionScreen({ store, nav, sessionId }: SessionScreenProps) {
 
       {exercises.length === 0 ? (
         <EmptyState
-          icon={Barbell}
+          icon={BarbellIcon}
           title="Treino sem exercícios"
           description="Este treino não possui exercícios. Finalize e edite o treino para adicioná-los."
         />
@@ -60,7 +60,7 @@ export function SessionScreen({ store, nav, sessionId }: SessionScreenProps) {
               exercise={ex}
               sets={sessionSets.filter((s) => s.exerciseId === ex.id)}
               onAddSet={(loadType, load, reps) =>
-                store.addSet(ex.id, loadType, load, reps, sessionId)
+                store.addSet(ex.id, loadType, load, reps, session.id)
               }
               onRemoveSet={store.removeSet}
             />
@@ -90,8 +90,8 @@ export function SessionScreen({ store, nav, sessionId }: SessionScreenProps) {
           confirmLabel="Descartar"
           onCancelLabel="Continuar treino"
           onConfirm={() => {
-            store.removeSession(sessionId);
-            nav.selectTab("home");
+            store.removeSession(session.id);
+            navigate(paths.home, { replace: true });
           }}
           onCancel={() => setConfirmDiscard(false)}
         />
@@ -120,7 +120,7 @@ function SessionExerciseCard({
     <li className="overflow-hidden rounded-2xl border border-border bg-card">
       <div className="flex items-center gap-3 p-4">
         <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-muted">
-          <Barbell size={18} weight="fill" />
+          <BarbellIcon size={18} weight="fill" />
         </span>
         <span className="min-w-0 flex-1">
           <span className="block truncate font-semibold">{exercise.name}</span>

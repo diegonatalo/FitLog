@@ -5,13 +5,16 @@ import {
   PlusIcon,
   PushPinIcon,
 } from "@phosphor-icons/react";
+import { Link, useNavigate } from "react-router";
 import type { MuscleGroup, Workout } from "../types";
 import type { PageProps } from "./shared";
 import { EmptyState } from "../components/EmptyState";
 import { MuscleBadge } from "../components/MuscleBadge";
+import { paths } from "../lib/paths";
 import { relativeDay, formatTime } from "../lib/format";
 
-export function HomePage({ store, nav }: PageProps) {
+export function HomePage({ store }: PageProps) {
+  const navigate = useNavigate();
   const { workouts, activeSession, exercises } = store;
 
   const exMap = new Map(exercises.map((e) => [e.id, e]));
@@ -27,14 +30,14 @@ export function HomePage({ store, nav }: PageProps) {
 
   const start = (wk: Workout) => {
     const session = store.startSession(wk);
-    nav.push({ t: "session", id: session.id });
+    navigate(paths.session(session.id));
   };
 
   return (
     <div className="flex flex-col gap-4">
       {activeSession && (
-        <button
-          onClick={() => nav.push({ t: "session", id: activeSession.id })}
+        <Link
+          to={paths.session(activeSession.id)}
           className="flex items-center gap-3 rounded-2xl border border-accent/50 bg-accent/10 p-4 text-left"
         >
           <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-accent text-accent-foreground">
@@ -57,7 +60,7 @@ export function HomePage({ store, nav }: PageProps) {
             className="shrink-0 text-accent"
             weight="bold"
           />
-        </button>
+        </Link>
       )}
 
       <div className="flex items-baseline justify-between">
@@ -75,12 +78,12 @@ export function HomePage({ store, nav }: PageProps) {
           title="Monte seu primeiro treino"
           description="Agrupe os exercícios de um dia (ex: Peito e Tríceps) em um treino para iniciar tudo com um toque."
           action={
-            <button
-              onClick={() => nav.push({ t: "workoutForm" })}
+            <Link
+              to={paths.newWorkout}
               className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 font-bold text-accent-foreground"
             >
               <PlusIcon size={20} weight="bold" /> Criar treino
-            </button>
+            </Link>
           }
         />
       ) : (
@@ -93,8 +96,8 @@ export function HomePage({ store, nav }: PageProps) {
                 key={wk.id}
                 className="overflow-hidden rounded-2xl border border-border bg-card"
               >
-                <button
-                  onClick={() => nav.push({ t: "workout", id: wk.id })}
+                <Link
+                  to={paths.workout(wk.id)}
                   className="flex w-full items-center gap-3 p-4 text-left transition-colors hover:bg-muted/40"
                 >
                   <span className="min-w-0 flex-1">
@@ -120,7 +123,7 @@ export function HomePage({ store, nav }: PageProps) {
                     className="shrink-0 text-muted-foreground"
                     weight="bold"
                   />
-                </button>
+                </Link>
                 <div className="border-t border-border p-2">
                   <button
                     onClick={() => start(wk)}
@@ -143,13 +146,13 @@ export function HomePage({ store, nav }: PageProps) {
       )}
 
       {workouts.length > 0 && (
-        <button
-          onClick={() => nav.push({ t: "workoutForm" })}
+        <Link
+          to={paths.newWorkout}
           className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border py-3.5 font-semibold text-muted-foreground transition-colors hover:border-accent hover:text-accent"
         >
           <PlusIcon size={20} weight="bold" />
           Criar treino
-        </button>
+        </Link>
       )}
     </div>
   );

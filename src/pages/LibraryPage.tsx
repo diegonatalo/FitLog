@@ -6,15 +6,17 @@ import {
   PlusIcon,
   XIcon,
 } from "@phosphor-icons/react";
+import { Link } from "react-router";
 import type { MuscleGroup } from "../types";
 import { MUSCLE_GROUPS } from "../types";
 import type { PageProps } from "./shared";
 import { EmptyState } from "../components/EmptyState";
 import { MuscleBadge } from "../components/MuscleBadge";
 import { ExerciseForm } from "../components/ExerciseForm";
+import { paths } from "../lib/paths";
 import { cn } from "../lib/format";
 
-export function LibraryPage({ store, nav }: PageProps) {
+export function LibraryPage({ store }: PageProps) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<MuscleGroup | "all">("all");
   const [adding, setAdding] = useState(false);
@@ -106,8 +108,8 @@ export function LibraryPage({ store, nav }: PageProps) {
             const last = store.setsByExercise.get(ex.id)?.[0];
             return (
               <li key={ex.id}>
-                <button
-                  onClick={() => nav.push({ t: "exercise", id: ex.id })}
+                <Link
+                  to={paths.exercise(ex.id)}
                   className="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-4 text-left transition-colors hover:bg-muted/50"
                 >
                   <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-muted text-foreground">
@@ -131,7 +133,7 @@ export function LibraryPage({ store, nav }: PageProps) {
                     className="shrink-0 text-muted-foreground"
                     weight="bold"
                   />
-                </button>
+                </Link>
               </li>
             );
           })}

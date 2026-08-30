@@ -3,8 +3,10 @@ import {
   ClockCounterClockwiseIcon,
   ListChecksIcon,
 } from "@phosphor-icons/react";
+import { Link } from "react-router";
 import type { PageProps } from "./shared";
 import { EmptyState } from "../components/EmptyState";
+import { paths } from "../lib/paths";
 import { formatTime, relativeDay } from "../lib/format";
 
 function duration(start: number, end: number): string {
@@ -15,7 +17,7 @@ function duration(start: number, end: number): string {
   return m ? `${h}h ${m}min` : `${h}h`;
 }
 
-export function HistoryPage({ store, nav }: PageProps) {
+export function HistoryPage({ store }: PageProps) {
   const { finishedSessions } = store;
 
   if (finishedSessions.length === 0) {
@@ -25,12 +27,12 @@ export function HistoryPage({ store, nav }: PageProps) {
         title="Nenhum treino concluído"
         description="Inicie um treino na aba Início e finalize-o para acompanhar sua evolução aqui."
         action={
-          <button
-            onClick={() => nav.selectTab("home")}
+          <Link
+            to={paths.home}
             className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 font-bold text-accent-foreground"
           >
             Ver meus treinos
-          </button>
+          </Link>
         }
       />
     );
@@ -43,8 +45,8 @@ export function HistoryPage({ store, nav }: PageProps) {
         const exerciseCount = new Set(sets.map((x) => x.exerciseId)).size;
         return (
           <li key={s.id}>
-            <button
-              onClick={() => nav.push({ t: "sessionDetail", id: s.id })}
+            <Link
+              to={paths.sessionDetail(s.id)}
               className="flex w-full items-center gap-3 rounded-2xl border border-border bg-card p-4 text-left transition-colors hover:bg-muted/40"
             >
               <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-muted text-foreground">
@@ -74,7 +76,7 @@ export function HistoryPage({ store, nav }: PageProps) {
                 className="shrink-0 text-muted-foreground"
                 weight="bold"
               />
-            </button>
+            </Link>
           </li>
         );
       })}

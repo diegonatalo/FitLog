@@ -3,12 +3,15 @@ import { CheckIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
 import type { PageProps } from "./shared";
 import { MuscleBadge } from "../components/MuscleBadge";
 import { cn } from "../lib/format";
+import { useNavigate } from "react-router";
+import { paths } from "../lib/paths";
 
 interface WorkoutFormProps extends PageProps {
   workoutId?: string;
 }
 
-export function WorkoutForm({ store, nav, workoutId }: WorkoutFormProps) {
+export function WorkoutForm({ store, workoutId }: WorkoutFormProps) {
+  const navigate = useNavigate();
   const editing = workoutId
     ? store.workouts.find((w) => w.id === workoutId)
     : undefined;
@@ -36,11 +39,11 @@ export function WorkoutForm({ store, nav, workoutId }: WorkoutFormProps) {
     if (!canSave) return;
     if (editing) {
       store.updateWorkout(editing.id, { name, exerciseIds: selected });
-      nav.pop();
+      navigate(-1);
     } else {
       const wk = store.addWorkout(name, selected);
-      if (wk) nav.replace({ t: "workout", id: wk.id });
-      else nav.pop();
+      if (wk) navigate(paths.workout(wk.id), { replace: true });
+      else navigate(-1);
     }
   };
 

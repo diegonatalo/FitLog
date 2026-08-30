@@ -2,10 +2,7 @@ import { ClockCounterClockwiseIcon, BarbellIcon } from "@phosphor-icons/react";
 import type { WorkoutSet } from "../types";
 import type { PageProps } from "./shared";
 import { formatTime, relativeDay } from "../lib/format";
-
-interface SessionDetailProps extends PageProps {
-  sessionId: string;
-}
+import { useParams } from "react-router";
 
 function duration(start: number, end: number): string {
   const mins = Math.max(1, Math.round((end - start) / 60000));
@@ -15,8 +12,9 @@ function duration(start: number, end: number): string {
   return m ? `${h}h ${m}min` : `${h}h`;
 }
 
-export function SessionDetail({ store, sessionId }: SessionDetailProps) {
-  const session = store.sessions.find((s) => s.id === sessionId);
+export function SessionDetail({ store }: PageProps) {
+  const { id = "" } = useParams();
+  const session = store.sessions.find((s) => s.id === id);
 
   if (!session) {
     return (
@@ -26,7 +24,7 @@ export function SessionDetail({ store, sessionId }: SessionDetailProps) {
     );
   }
 
-  const sets = store.setsBySession.get(sessionId) ?? [];
+  const sets = store.setsBySession.get(session.id) ?? [];
 
   const groups = sets.reduce<Record<string, WorkoutSet[]>>((acc, set) => {
     (acc[set.exerciseId] ??= []).push(set);

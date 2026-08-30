@@ -6,20 +6,20 @@ import {
   PlayIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
+import { Link, Navigate, useNavigate, useParams } from "react-router";
 import type { PageProps } from "./shared";
+import { paths } from "../lib/paths";
 import { MuscleBadge } from "../components/MuscleBadge";
 import { EmptyState } from "../components/EmptyState";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 
-interface WorkoutDetailProps extends PageProps {
-  workoutId: string;
-}
-
-export function WorkoutDetail({ store, nav, workoutId }: WorkoutDetailProps) {
-  const workout = store.workouts.find((w) => w.id === workoutId);
+export function WorkoutDetail({ store }: PageProps) {
+  const { id = "" } = useParams();
+  const navigate = useNavigate();
+  const workout = store.workouts.find((w) => w.id === id);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  if (!workout) return null;
+  if (!workout) return <Navigate to={paths.home} replace />;
 
   const exercises = workout.exerciseIds
     .map((id) => store.exercises.find((e) => e.id === id))
@@ -30,22 +30,22 @@ export function WorkoutDetail({ store, nav, workoutId }: WorkoutDetailProps) {
 
   const start = () => {
     if (store.activeSession) {
-      nav.push({ t: "session", id: store.activeSession.id });
+      navigate(paths.session(store.activeSession.id));
       return;
     }
     const session = store.startSession(workout);
-    nav.push({ t: "session", id: session.id });
+    navigate(paths.session(session.id));
   };
 
   return (
     <div className="flex flex-col gap-5">
       <div className="flex gap-2">
-        <button
-          onClick={() => nav.push({ t: "workoutForm", id: workout.id })}
+        <Link
+          to={paths.editWorkout(workout.id)}
           className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-border bg-card py-2.5 text-sm font-medium hover:bg-muted"
         >
           <PencilSimpleIcon size={16} weight="bold" /> Editar
-        </button>
+        </Link>
         <button
           onClick={() => setConfirmDelete(true)}
           aria-label="Excluir treino"
@@ -71,20 +71,20 @@ export function WorkoutDetail({ store, nav, workoutId }: WorkoutDetailProps) {
             title="Treino sem exercícios"
             description="Edite o treino para adicionar exercícios da sua biblioteca."
             action={
-              <button
-                onClick={() => nav.push({ t: "workoutForm", id: workout.id })}
+              <Link
+                to={paths.editWorkout(workout.id)}
                 className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 font-bold text-accent-foreground"
               >
                 <PencilSimpleIcon size={18} weight="bold" /> Editar treino
-              </button>
+              </Link>
             }
           />
         ) : (
           <ul className="flex flex-col gap-2">
             {exercises.map((ex) => (
               <li key={ex.id}>
-                <button
-                  onClick={() => nav.push({ t: "exercise", id: ex.id })}
+                <Link
+                  to={paths.exercise(ex.id)}
                   className="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-3.5 text-left transition-colors hover:bg-muted/50"
                 >
                   <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-muted">
@@ -101,7 +101,7 @@ export function WorkoutDetail({ store, nav, workoutId }: WorkoutDetailProps) {
                     className="shrink-0 text-muted-foreground"
                     weight="bold"
                   />
-                </button>
+                </Link>
               </li>
             ))}
           </ul>
@@ -125,7 +125,7 @@ export function WorkoutDetail({ store, nav, workoutId }: WorkoutDetailProps) {
           onCancelLabel="Cancelar"
           onConfirm={() => {
             store.removeWorkout(workout.id);
-            nav.pop();
+            navigate(paths.home, { replace: true });
           }}
           onCancel={() => setConfirmDelete(false)}
         />
