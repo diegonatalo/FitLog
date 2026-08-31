@@ -1,16 +1,8 @@
 import { ClockCounterClockwiseIcon, BarbellIcon } from "@phosphor-icons/react";
 import type { WorkoutSet } from "../types";
 import type { PageProps } from "./shared";
-import { formatTime, relativeDay } from "../lib/format";
+import { formatDuration, formatTime, relativeDay } from "../lib/format";
 import { useParams } from "react-router";
-
-function duration(start: number, end: number): string {
-  const mins = Math.max(1, Math.round((end - start) / 60000));
-  if (mins < 60) return `${mins} min`;
-  const h = Math.floor(mins / 60);
-  const m = mins % 60;
-  return m ? `${h}h ${m}min` : `${h}h`;
-}
 
 export function SessionDetail({ store }: PageProps) {
   const { id = "" } = useParams();
@@ -47,7 +39,7 @@ export function SessionDetail({ store }: PageProps) {
           label="Duração"
           value={
             session.finishedAt
-              ? duration(session.startedAt, session.finishedAt)
+              ? formatDuration(session.startedAt, session.finishedAt)
               : "—"
           }
         />
