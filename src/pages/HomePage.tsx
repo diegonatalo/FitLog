@@ -7,13 +7,14 @@ import {
 } from "@phosphor-icons/react";
 import { Link, useNavigate } from "react-router";
 import type { MuscleGroup, Workout } from "../types";
-import type { PageProps } from "./shared";
+import { useStore } from "./shared";
 import { EmptyState } from "../components/EmptyState";
 import { MuscleBadge } from "../components/MuscleBadge";
 import { paths } from "../lib/paths";
 import { relativeDay, formatTime } from "../lib/format";
 
-export function HomePage({ store }: PageProps) {
+export function HomePage() {
+  const store = useStore();
   const navigate = useNavigate();
   const { workouts, activeSession, exercises } = store;
 

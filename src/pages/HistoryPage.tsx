@@ -4,12 +4,13 @@ import {
   ListChecksIcon,
 } from "@phosphor-icons/react";
 import { Link } from "react-router";
-import type { PageProps } from "./shared";
+import { useStore } from "./shared";
 import { EmptyState } from "../components/EmptyState";
 import { paths } from "../lib/paths";
 import { formatDuration, formatTime, relativeDay } from "../lib/format";
 
-export function HistoryPage({ store }: PageProps) {
+export function HistoryPage() {
+  const store = useStore();
   const { finishedSessions } = store;
 
   if (finishedSessions.length === 0) {

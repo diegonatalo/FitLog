@@ -3,7 +3,7 @@ import { Outlet, matchPath, useLocation, useNavigate } from "react-router";
 import { Header } from "./Header";
 import { BottomNav } from "./BottomNav";
 import { patterns, tabPatterns } from "../lib/paths";
-import type { Store } from "../pages/shared";
+import { useStore, type Store } from "../pages/shared";
 
 interface HeaderInfo {
   title: string;
@@ -67,12 +67,12 @@ const HEADER_RULES: {
 ];
 
 interface LayoutProps {
-  store: Store;
   theme: "dark" | "light";
   onToggleTheme: () => void;
 }
 
-export function Layout({ store, theme, onToggleTheme }: LayoutProps) {
+export function Layout({ theme, onToggleTheme }: LayoutProps) {
+  const store = useStore();
   const { pathname } = useLocation();
   const navigate = useNavigate();
 

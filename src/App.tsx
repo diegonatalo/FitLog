@@ -3,6 +3,7 @@ import { useTheme } from "./hooks/useTheme";
 import { useWorkoutStore } from "./hooks/useWorkoutStore";
 import { Layout } from "./components/Layout";
 import { patterns } from "./lib/paths";
+import { StoreProvider } from "./pages/shared";
 import { HomePage } from "./pages/HomePage";
 import { LibraryPage } from "./pages/LibraryPage";
 import { HistoryPage } from "./pages/HistoryPage";
@@ -17,45 +18,21 @@ export default function App() {
   const store = useWorkoutStore();
 
   return (
-    <Routes>
-      <Route
-        element={<Layout store={store} theme={theme} onToggleTheme={toggle} />}
-      >
-        <Route path={patterns.home} element={<HomePage store={store} />} />
-        <Route
-          path={patterns.library}
-          element={<LibraryPage store={store} />}
-        />
-        <Route
-          path={patterns.history}
-          element={<HistoryPage store={store} />}
-        />
-        <Route
-          path={patterns.sessionDetail}
-          element={<SessionDetail store={store} />}
-        />
-        <Route
-          path={patterns.exercise}
-          element={<ExerciseDetail store={store} />}
-        />
-        <Route
-          path={patterns.newWorkout}
-          element={<WorkoutForm store={store} />}
-        />
-        <Route
-          path={patterns.editWorkout}
-          element={<WorkoutForm store={store} />}
-        />
-        <Route
-          path={patterns.workout}
-          element={<WorkoutDetail store={store} />}
-        />
-        <Route
-          path={patterns.session}
-          element={<SessionScreen store={store} />}
-        />
-        <Route path="*" element={<Navigate to={patterns.home} replace />} />
-      </Route>
-    </Routes>
+    <StoreProvider value={store}>
+      <Routes>
+        <Route element={<Layout theme={theme} onToggleTheme={toggle} />}>
+          <Route path={patterns.home} element={<HomePage />} />
+          <Route path={patterns.library} element={<LibraryPage />} />
+          <Route path={patterns.history} element={<HistoryPage />} />
+          <Route path={patterns.sessionDetail} element={<SessionDetail />} />
+          <Route path={patterns.exercise} element={<ExerciseDetail />} />
+          <Route path={patterns.newWorkout} element={<WorkoutForm />} />
+          <Route path={patterns.editWorkout} element={<WorkoutForm />} />
+          <Route path={patterns.workout} element={<WorkoutDetail />} />
+          <Route path={patterns.session} element={<SessionScreen />} />
+          <Route path="*" element={<Navigate to={patterns.home} replace />} />
+        </Route>
+      </Routes>
+    </StoreProvider>
   );
 }

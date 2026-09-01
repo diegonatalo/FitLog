@@ -1,10 +1,11 @@
 import { ClockCounterClockwiseIcon, BarbellIcon } from "@phosphor-icons/react";
 import type { WorkoutSet } from "../types";
-import type { PageProps } from "./shared";
+import { useStore } from "./shared";
 import { formatDuration, formatTime, relativeDay } from "../lib/format";
 import { useParams } from "react-router";
 
-export function SessionDetail({ store }: PageProps) {
+export function SessionDetail() {
+  const store = useStore();
   const { id = "" } = useParams();
   const session = store.sessions.find((s) => s.id === id);
 

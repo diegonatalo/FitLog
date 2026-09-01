@@ -8,9 +8,10 @@ import { ExerciseForm } from "../components/ExerciseForm";
 import { LogForm } from "../components/LogForm";
 import { HistoryList } from "../components/HistoryList";
 import { ConfirmDialog } from "../components/ConfirmDialog";
-import type { PageProps } from "./shared";
+import { useStore } from "./shared";
 
-export function ExerciseDetail({ store }: PageProps) {
+export function ExerciseDetail() {
+  const store = useStore();
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const exercise = store.exercises.find((e) => e.id === id);
