@@ -1,20 +1,16 @@
 import { useMemo, useState } from "react";
 import { CheckIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
-import type { PageProps } from "./shared";
+import { useStore } from "./shared";
 import { MuscleBadge } from "../components/MuscleBadge";
 import { cn } from "../lib/format";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { paths } from "../lib/paths";
 
-interface WorkoutFormProps extends PageProps {
-  workoutId?: string;
-}
-
-export function WorkoutForm({ store, workoutId }: WorkoutFormProps) {
+export function WorkoutForm() {
+  const store = useStore();
   const navigate = useNavigate();
-  const editing = workoutId
-    ? store.workouts.find((w) => w.id === workoutId)
-    : undefined;
+  const { id } = useParams();
+  const editing = id ? store.workouts.find((w) => w.id === id) : undefined;
   const [name, setName] = useState(editing?.name ?? "");
   const [selected, setSelected] = useState<string[]>(
     editing?.exerciseIds ?? [],

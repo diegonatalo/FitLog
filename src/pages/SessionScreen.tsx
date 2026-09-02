@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CheckCircleIcon, PlusIcon, TrashIcon } from "@phosphor-icons/react";
 import type { Exercise, LoadType, WorkoutSet } from "../types";
-import type { PageProps } from "./shared";
+import { useStore } from "./shared";
 import { MuscleBadge } from "../components/MuscleBadge";
 import { LogForm } from "../components/LogForm";
 import { ConfirmDialog } from "../components/ConfirmDialog";
@@ -10,7 +10,8 @@ import { BarbellIcon } from "@phosphor-icons/react";
 import { paths } from "../lib/paths";
 import { useNavigate, useParams } from "react-router";
 
-export function SessionScreen({ store }: PageProps) {
+export function SessionScreen() {
+  const store = useStore();
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const session = store.sessions.find((s) => s.id === id);
@@ -114,7 +115,6 @@ function SessionExerciseCard({
   onRemoveSet,
 }: CardProps) {
   const [open, setOpen] = useState(false);
-  const ordered = [...sets].sort((a, b) => a.createdAt - b.createdAt);
 
   return (
     <li className="overflow-hidden rounded-2xl border border-border bg-card">
@@ -131,9 +131,9 @@ function SessionExerciseCard({
         <MuscleBadge group={exercise.muscleGroup} />
       </div>
 
-      {ordered.length > 0 && (
+      {sets.length > 0 && (
         <ol className="flex flex-col gap-1.5 px-4 pb-3">
-          {ordered.map((s, i) => (
+          {sets.map((s, i) => (
             <li
               key={s.id}
               className="flex items-center gap-3 rounded-lg bg-muted/60 px-3 py-2 text-sm"

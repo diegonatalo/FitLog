@@ -1,4 +1,4 @@
-import { Barbell, Stack } from "@phosphor-icons/react";
+import { BarbellIcon, StackIcon } from "@phosphor-icons/react";
 import type { LoadType } from "../types";
 import { cn } from "../lib/format";
 
@@ -7,9 +7,9 @@ interface LoadTypeToggleProps {
   onChange: (value: LoadType) => void;
 }
 
-const OPTIONS: { value: LoadType; label: string; icon: typeof Barbell }[] = [
-  { value: "weight", label: "Peso (kg)", icon: Barbell },
-  { value: "plates", label: "Placas", icon: Stack },
+const OPTIONS: { value: LoadType; label: string; icon: typeof BarbellIcon }[] = [
+  { value: "weight", label: "Peso (kg)", icon: BarbellIcon },
+  { value: "plates", label: "Placas", icon: StackIcon },
 ];
 
 export function LoadTypeToggle({ value, onChange }: LoadTypeToggleProps) {

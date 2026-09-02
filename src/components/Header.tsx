@@ -1,5 +1,10 @@
 import type { ReactNode } from "react";
-import { Barbell, CaretLeft, Moon, Sun } from "@phosphor-icons/react";
+import {
+  BarbellIcon,
+  CaretLeftIcon,
+  MoonIcon,
+  SunIcon,
+} from "@phosphor-icons/react";
 
 interface HeaderProps {
   theme: "light" | "dark";

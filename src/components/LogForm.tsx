@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Check, FloppyDisk, Minus, Plus } from "@phosphor-icons/react";
+import {
+  CheckIcon,
+  FloppyDiskIcon,
+  MinusIcon,
+  PlusIcon,
+} from "@phosphor-icons/react";
 import type { LoadType } from "../types";
 import { LoadTypeToggle } from "./LoadTypeToggle";
 import { cn } from "../lib/format";
@@ -80,11 +85,11 @@ export function LogForm({ defaultLoadType, onSave, justSaved }: LogFormProps) {
       >
         {justSaved ? (
           <>
-            <Check size={20} weight="bold" /> Salvo!
+            <CheckIcon size={20} weight="bold" /> Salvo!
           </>
         ) : (
           <>
-            <FloppyDisk size={20} weight="bold" /> Salvar
+            <FloppyDiskIcon size={20} weight="bold" /> Salvar
           </>
         )}
       </button>
@@ -121,7 +126,7 @@ function Stepper({
           onClick={() => onStep(-stepAmount)}
           className="size-11 shrink-0 grid place-items-center text-muted-foreground hover:bg-muted active:bg-muted"
         >
-          <Minus size={18} weight="bold" />
+          <MinusIcon size={18} weight="bold" />
         </button>
         <input
           type="number"
@@ -137,7 +142,7 @@ function Stepper({
           onClick={() => onStep(stepAmount)}
           className="size-11 shrink-0 grid place-items-center text-muted-foreground hover:bg-muted active:bg-muted"
         >
-          <Plus size={18} weight="bold" />
+          <PlusIcon size={18} weight="bold" />
         </button>
       </div>
     </div>
