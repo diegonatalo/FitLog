@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { X } from "@phosphor-icons/react";
+import { XIcon } from "@phosphor-icons/react";
 import type { Exercise, LoadType, MuscleGroup } from "../types";
 import { MUSCLE_GROUPS } from "../types";
 import { LoadTypeToggle } from "./LoadTypeToggle";
@@ -62,7 +62,7 @@ export function ExerciseForm({
             aria-label="Fechar"
             className="grid size-8 place-items-center rounded-full text-muted-foreground hover:bg-muted"
           >
-            <X size={18} weight="bold" />
+            <XIcon size={18} weight="bold" />
           </button>
         </div>
 

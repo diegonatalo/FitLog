@@ -34,11 +34,11 @@ export function Header({
             aria-label="Voltar"
             className="-ml-2 grid size-9 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
           >
-            <CaretLeft size={22} weight="bold" />
+            <CaretLeftIcon size={22} weight="bold" />
           </button>
         ) : (
           <span className="grid size-9 place-items-center rounded-xl bg-accent text-accent-foreground">
-            <Barbell size={22} weight="fill" />
+            <BarbellIcon size={22} weight="fill" />
           </span>
         )}
 
@@ -63,9 +63,9 @@ export function Header({
           className="grid size-9 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
         >
           {theme === "dark" ? (
-            <Sun size={20} weight="bold" />
+            <SunIcon size={20} weight="bold" />
           ) : (
-            <Moon size={20} weight="bold" />
+            <MoonIcon size={20} weight="bold" />
           )}
         </button>
       </div>
