@@ -10,12 +10,7 @@ function getInitialTheme(): Theme {
   } catch {
     /* ignore */
   }
-  if (
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches
-  ) {
-    return "dark";
-  }
+  // No stored preference: default to dark (the app's default aesthetic).
   return "dark";
 }
 

@@ -9,14 +9,15 @@ import {
 import { Link } from "react-router";
 import type { MuscleGroup } from "../types";
 import { MUSCLE_GROUPS } from "../types";
-import type { PageProps } from "./shared";
+import { useStore } from "./shared";
 import { EmptyState } from "../components/EmptyState";
 import { MuscleBadge } from "../components/MuscleBadge";
 import { ExerciseForm } from "../components/ExerciseForm";
 import { paths } from "../lib/paths";
 import { cn } from "../lib/format";
 
-export function LibraryPage({ store }: PageProps) {
+export function LibraryPage() {
+  const store = useStore();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<MuscleGroup | "all">("all");
   const [adding, setAdding] = useState(false);

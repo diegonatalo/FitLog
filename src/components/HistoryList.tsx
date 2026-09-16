@@ -1,4 +1,4 @@
-import { ClockCounterClockwise, Trash } from "@phosphor-icons/react";
+import { ClockCounterClockwiseIcon, TrashIcon } from "@phosphor-icons/react";
 import type { WorkoutSet } from "../types";
 import { formatTime, relativeDay } from "../lib/format";
 
@@ -11,7 +11,10 @@ export function HistoryList({ sets, onRemoveSet }: HistoryListProps) {
   return (
     <section>
       <div className="flex items-center gap-2 mb-3">
-        <ClockCounterClockwise size={18} className="text-muted-foreground" />
+        <ClockCounterClockwiseIcon
+          size={18}
+          className="text-muted-foreground"
+        />
         <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
           Histórico
         </h2>
@@ -58,7 +61,7 @@ export function HistoryList({ sets, onRemoveSet }: HistoryListProps) {
                 aria-label="Excluir registro"
                 className="size-9 shrink-0 grid place-items-center rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
               >
-                <Trash size={17} />
+                <TrashIcon size={17} />
               </button>
             </li>
           ))}

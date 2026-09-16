@@ -4,20 +4,13 @@ import {
   ListChecksIcon,
 } from "@phosphor-icons/react";
 import { Link } from "react-router";
-import type { PageProps } from "./shared";
+import { useStore } from "./shared";
 import { EmptyState } from "../components/EmptyState";
 import { paths } from "../lib/paths";
-import { formatTime, relativeDay } from "../lib/format";
+import { formatDuration, formatTime, relativeDay } from "../lib/format";
 
-function duration(start: number, end: number): string {
-  const mins = Math.max(1, Math.round((end - start) / 60000));
-  if (mins < 60) return `${mins} min`;
-  const h = Math.floor(mins / 60);
-  const m = mins % 60;
-  return m ? `${h}h ${m}min` : `${h}h`;
-}
-
-export function HistoryPage({ store }: PageProps) {
+export function HistoryPage() {
+  const store = useStore();
   const { finishedSessions } = store;
 
   if (finishedSessions.length === 0) {
@@ -58,7 +51,7 @@ export function HistoryPage({ store }: PageProps) {
                   <span className="capitalize">{relativeDay(s.startedAt)}</span>{" "}
                   · {formatTime(s.startedAt)}
                   {s.finishedAt
-                    ? ` · ${duration(s.startedAt, s.finishedAt)}`
+                    ? ` · ${formatDuration(s.startedAt, s.finishedAt)}`
                     : ""}
                 </span>
                 <span className="mt-1.5 flex items-center gap-3 text-xs font-medium text-muted-foreground">

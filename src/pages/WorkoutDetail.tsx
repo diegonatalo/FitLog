@@ -7,13 +7,14 @@ import {
   TrashIcon,
 } from "@phosphor-icons/react";
 import { Link, Navigate, useNavigate, useParams } from "react-router";
-import type { PageProps } from "./shared";
+import { useStore } from "./shared";
 import { paths } from "../lib/paths";
 import { MuscleBadge } from "../components/MuscleBadge";
 import { EmptyState } from "../components/EmptyState";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 
-export function WorkoutDetail({ store }: PageProps) {
+export function WorkoutDetail() {
+  const store = useStore();
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const workout = store.workouts.find((w) => w.id === id);

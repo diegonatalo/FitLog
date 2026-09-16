@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import type {
   Exercise,
   LoadType,
@@ -7,30 +7,20 @@ import type {
   WorkoutSession,
   WorkoutSet,
 } from "../types";
-import {
-  loadExercises,
-  loadSessions,
-  loadSets,
-  loadWorkouts,
-  saveExercises,
-  saveSessions,
-  saveSets,
-  saveWorkouts,
-  uid,
-} from "../lib/storage";
+import { STORAGE_KEYS, uid } from "../lib/storage";
+import { usePersistedState } from "./usePersistedState";
 
 export function useWorkoutStore() {
-  const [exercises, setExercises] = useState<Exercise[]>(() => loadExercises());
-  const [sets, setSets] = useState<WorkoutSet[]>(() => loadSets());
-  const [workouts, setWorkouts] = useState<Workout[]>(() => loadWorkouts());
-  const [sessions, setSessions] = useState<WorkoutSession[]>(() =>
-    loadSessions(),
+  const [exercises, setExercises] = usePersistedState<Exercise[]>(
+    STORAGE_KEYS.exercises,
   );
-
-  useEffect(() => saveExercises(exercises), [exercises]);
-  useEffect(() => saveSets(sets), [sets]);
-  useEffect(() => saveWorkouts(workouts), [workouts]);
-  useEffect(() => saveSessions(sessions), [sessions]);
+  const [sets, setSets] = usePersistedState<WorkoutSet[]>(STORAGE_KEYS.sets);
+  const [workouts, setWorkouts] = usePersistedState<Workout[]>(
+    STORAGE_KEYS.workouts,
+  );
+  const [sessions, setSessions] = usePersistedState<WorkoutSession[]>(
+    STORAGE_KEYS.sessions,
+  );
 
   /* ---------- Exercises ---------- */
   const addExercise = useCallback(
