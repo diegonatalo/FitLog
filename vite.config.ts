@@ -4,7 +4,7 @@ import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
 
 /** Public pages, listed in the sitemap. The rest of the app is per-user data. */
-const PUBLIC_ROUTES = ['/', '/biblioteca', '/historico']
+const PUBLIC_ROUTES = ['/', '/biblioteca', '/historico', '/cardio']
 
 /**
  * Fills `%SITE_URL%` in index.html and emits robots.txt and sitemap.xml with

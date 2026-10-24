@@ -5,7 +5,7 @@
 # FitLog
 
 **O diário de treino que cabe no bolso.**<br />
-Registre séries, monte treinos, bata recordes e veja sua evolução, sem cadastro e sem internet.
+Registre séries, monte treinos, bata recordes, estime o gasto do cardio e veja sua evolução, sem cadastro e sem internet.
 
 <br />
 
@@ -30,10 +30,62 @@ Registre séries, monte treinos, bata recordes e veja sua evolução, sem cadast
 | **Sessão ao vivo** | Cronômetro do treino, séries por exercício e observações da sessão e de cada série. |
 | **Timer de descanso** | Contagem regressiva de 60, 90, 120 ou 180 s depois de cada série, com vibração ao terminar. |
 | **Carga sugerida** | A última série do exercício já vem preenchida, então você só ajusta o que mudou. |
-| **Quatro tipos de carga** | Peso (kg), placas, peso corporal (com carga extra opcional) e tempo, para cardio. |
+| **Quatro tipos de carga** | Peso (kg), placas, peso corporal (com carga extra opcional) e tempo, para exercícios cronometrados. |
+| **Calculadora de cardio** | Informe velocidade, inclinação e duração na esteira e veja calorias e frequência cardíaca estimadas, a zona de esforço e dicas para a intensidade. |
+| **Comparador de esteira** | Gráfico com as curvas de 0%, 6%, 12% e 18% de inclinação (e a sua), em calorias ou frequência cardíaca, para ver o efeito de mudar velocidade ou inclinação. |
+| **Perfil** | Peso, idade e sexo ficam salvos em Ajustes e alimentam as estimativas do cardio. |
 | **Recordes e evolução** | Aviso na hora de um novo recorde, marca de PR no histórico, 1RM estimado e gráfico da melhor carga por dia. |
-| **Biblioteca** | Busca, filtro por grupo muscular e 25 exercícios de exemplo. Exercícios com histórico são arquivados, não apagados. |
-| **Histórico de sessões** | Duração, séries e anotações de cada treino concluído, com edição de qualquer série. |
+| **Biblioteca** | Busca, filtro por grupo muscular e 24 exercícios de exemplo. Exercícios com histórico são arquivados, não apagados. |
+| **Histórico de sessões** | Duração, séries e anotações de cada treino concluído, com edição de qualquer série. Um seletor alterna entre **Treinos** e **Cardio**. |
+
+<br />
+
+## 📱 Telas
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/inicio.png" alt="Treinos" width="220" /><br />
+      <sub><b>Treinos</b></sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/sessao.png" alt="Sessão ao vivo" width="220" /><br />
+      <sub><b>Sessão ao vivo</b></sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/exercicio.png" alt="Evolução do exercício" width="220" /><br />
+      <sub><b>Evolução do exercício</b></sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/biblioteca.png" alt="Biblioteca" width="220" /><br />
+      <sub><b>Biblioteca</b></sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/historico.png" alt="Histórico de treinos" width="220" /><br />
+      <sub><b>Histórico de treinos</b></sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/historico-cardio.png" alt="Histórico de cardio" width="220" /><br />
+      <sub><b>Histórico de cardio</b></sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/cardio.png" alt="Calculadora de cardio" width="220" /><br />
+      <sub><b>Calculadora de cardio</b></sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/cardio-grafico.png" alt="Comparador e dicas" width="220" /><br />
+      <sub><b>Comparador e dicas</b></sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/ajustes.png" alt="Ajustes e perfil" width="220" /><br />
+      <sub><b>Ajustes e perfil</b></sub>
+    </td>
+  </tr>
+</table>
 
 <br />
 
@@ -47,7 +99,8 @@ Tudo fica no `localStorage` do seu navegador. Não há conta, servidor nem rastr
 
 > [!NOTE]
 > Limpar os dados do navegador apaga o histórico. Em **Ajustes**, use **Exportar backup** para
-> salvar um arquivo JSON e **Importar backup** para restaurá-lo, inclusive em outro aparelho.
+> salvar um arquivo JSON (treinos, cardio e perfil) e **Importar backup** para restaurá-lo, inclusive em outro aparelho.
+> Backups feitos antes da aba Cardio continuam sendo importados normalmente.
 
 <br />
 
@@ -59,6 +112,12 @@ Tudo fica no `localStorage` do seu navegador. Não há conta, servidor nem rastr
 | **1RM estimado** | Fórmula de Epley (`carga × (1 + reps / 30)`), calculada sobre a melhor série em peso. |
 | **Sessão** | Só uma sessão pode estar ativa por vez. Descartar apaga as séries dela, finalizar manda para o histórico. |
 | **Arquivar** | Exercício com registros é arquivado ao ser removido. O histórico é mantido e ele pode ser restaurado em Biblioteca → Arquivados. |
+| **Calorias do cardio** | Equações metabólicas da ACSM para caminhada (abaixo de 8 km/h) e corrida (a partir de 8 km/h), que estimam o consumo de O₂ pela velocidade e inclinação. O gasto sai de `O₂ × peso × 5 kcal/L × tempo`. |
+| **FC estimada** | Esforço como fração da reserva de FC: VO₂máx de Uth–Sørensen e FC de repouso fixa em 70 bpm. FC máxima de Tanaka (`208 − 0,7 × idade`) para homens e de Gulati (`206 − 0,88 × idade`) para mulheres. |
+| **Zonas** | Cinco zonas pela reserva de FC: muito leve (<40%), leve, moderada, intensa (≥80%) e máxima (≥90%). |
+
+> [!NOTE]
+> As estimativas do cardio são médias populacionais, com margem de erro de 10–20%, e não substituem orientação profissional.
 
 <br />
 
@@ -106,6 +165,7 @@ src/
 │   ├── storage.ts    persistência e migrações versionadas
 │   ├── defaults.ts   exercícios e treinos de exemplo
 │   ├── stats.ts      recordes, 1RM e série histórica
+│   ├── cardio.ts     calorias, FC estimada, zonas, comparação e dicas da esteira
 │   ├── format.ts     datas, durações e cargas
 │   └── paths.ts      rotas centralizadas
 ├── pages/        uma tela por rota
@@ -136,7 +196,7 @@ public/           ícones, manifest, service worker e imagem Open Graph
 Publicado na [Vercel](https://vercel.com) em [dn-fitlog.vercel.app](https://dn-fitlog.vercel.app).
 
 - O `vercel.json` reescreve todas as rotas para `index.html`, o que mantém funcionando o acesso direto a páginas como `/biblioteca`.
-- O `robots.txt` e o `sitemap.xml` são gerados na build, em `vite.config.ts`.
+- O `robots.txt` e o `sitemap.xml` são gerados na build, em `vite.config.ts`. As rotas públicas listadas no sitemap são `/`, `/biblioteca`, `/historico` e `/cardio`; sessões ativas (`/sessao/`) ficam bloqueadas no robots.
 - Ao trocar de domínio, defina `VITE_SITE_URL` (ou altere o valor padrão em `vite.config.ts`). Sem isso, o Open Graph, o `canonical` e o sitemap continuam apontando para o endereço antigo.
 
 <br />
@@ -144,9 +204,9 @@ Publicado na [Vercel](https://vercel.com) em [dn-fitlog.vercel.app](https://dn-f
 ## 🧭 Próximos passos
 
 - [ ] Testes automatizados (Vitest) para `lib/` e para as regras do store
-- [ ] Capturas de tela no README
 - [ ] Séries de aquecimento e *drop sets*
 - [ ] Medidas corporais e peso ao longo do tempo
+- [ ] Calculadora de cardio para outros equipamentos (bicicleta, elíptico)
 - [ ] Sincronização opcional entre dispositivos
 
 > Hoje não há testes automatizados nem CI, e os dados existem apenas no aparelho onde foram registrados.
