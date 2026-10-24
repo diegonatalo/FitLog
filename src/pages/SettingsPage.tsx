@@ -9,6 +9,7 @@ import { buildBackup, parseBackup } from "../lib/schema";
 import type { BackupData } from "../lib/schema";
 import { useStore } from "../hooks/useStore";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { CardioProfileForm } from "../components/CardioProfileForm";
 
 type Notice = { kind: "ok" | "error"; text: string } | null;
 
@@ -55,6 +56,13 @@ export function SettingsPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      <Section
+        title="Perfil"
+        description="Usado nas estimativas de calorias e frequência cardíaca da aba Cardio."
+      >
+        <CardioProfileForm />
+      </Section>
+
       <Section
         title="Backup"
         description="Seus dados ficam apenas neste aparelho. Exporte um backup para guardá-los ou levá-los para outro dispositivo."

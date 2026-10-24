@@ -1,4 +1,4 @@
-import type { CardioProfile } from "../types";
+import type { CardioProfile, Sex } from "../types";
 
 /**
  * Treadmill estimates. Oxygen cost comes from the ACSM walking/running
@@ -46,7 +46,9 @@ export interface CardioEstimate {
   zone: Zone;
 }
 
-export const maxHeartRate = (age: number) => Math.round(208 - 0.7 * age);
+/** Tanaka for men, Gulati (developed on women) for women. */
+export const maxHeartRate = (age: number, sex: Sex) =>
+  Math.round(sex === "female" ? 206 - 0.88 * age : 208 - 0.7 * age);
 
 export function oxygenCost({ speedKmh, inclinePct }: CardioInput): number {
   const metresPerMin = (speedKmh * 1000) / 60;
@@ -68,7 +70,7 @@ export function estimate(
   const kcalPerMin =
     (vo2 * profile.weightKg * KCAL_PER_LITRE_O2) / 1000;
 
-  const maxHr = maxHeartRate(profile.age);
+  const maxHr = maxHeartRate(profile.age, profile.sex);
   const rest = Math.min(RESTING_HR, maxHr - 1);
   // Uth–Sørensen: VO2max ≈ 15.3 × HRmax / HRrest
   const vo2Max = (15.3 * maxHr) / rest;
@@ -103,7 +105,7 @@ export interface Curve {
   points: CurvePoint[];
 }
 
-const BASE_INCLINES = [0, 5, 10, 15];
+const BASE_INCLINES = [0, 6, 12, 18];
 
 /** One curve per incline over a speed range, always including the user's. */
 export function compare(
@@ -168,11 +170,11 @@ export function tips(
 
   if (result.zone.id <= 2) {
     const steeper = estimate(
-      { ...input, inclinePct: Math.min(15, input.inclinePct + 3) },
+      { ...input, inclinePct: Math.min(20, input.inclinePct + 3) },
       profile,
     );
     const extra = steeper.kcal - result.kcal;
-    if (extra > 0 && input.inclinePct < 15) {
+    if (extra > 0 && input.inclinePct < 20) {
       out.push({
         title: "Mais gasto sem correr",
         text: `Subir 3% de inclinação mantendo a velocidade adiciona cerca de ${extra} kcal na sessão e leva a FC para ~${steeper.avgHr} bpm.`,

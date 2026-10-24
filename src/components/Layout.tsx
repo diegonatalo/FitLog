@@ -38,7 +38,7 @@ const HEADER_RULES: {
   },
   {
     pattern: patterns.history,
-    resolve: () => ({ title: "Histórico", subtitle: "Treinos concluídos" }),
+    resolve: () => ({ title: "Histórico", subtitle: "Treinos e cardio" }),
   },
   {
     pattern: patterns.cardio,

@@ -137,8 +137,8 @@ export function normalizeCardioProfile(v: unknown): CardioProfile | null {
   if (!isRecord(v)) return null;
   const weightKg = num(v.weightKg);
   const age = num(v.age);
-  if (!weightKg || !age) return null;
-  return { weightKg, age };
+  if (!weightKg || !age || (v.sex !== "male" && v.sex !== "female")) return null;
+  return { weightKg, age, sex: v.sex };
 }
 
 export function normalizeList<T>(

@@ -138,9 +138,13 @@ export interface WorkoutSession {
 }
 
 /** Body data used by the treadmill calculator; saved so it is typed only once. */
+export type Sex = "male" | "female";
+
 export interface CardioProfile {
   weightKg: number;
   age: number;
+  /** only used to pick the max-heart-rate formula */
+  sex: Sex;
 }
 
 /** A treadmill session saved from the calculator, with the estimates frozen. */
