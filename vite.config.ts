@@ -40,7 +40,7 @@ function siteMeta(siteUrl: string): Plugin {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const siteUrl =
-    process.env.VITE_SITE_URL ?? env.VITE_SITE_URL ?? 'https://fitlog.example.com'
+    process.env.VITE_SITE_URL ?? env.VITE_SITE_URL ?? 'https://dn-fitlog.vercel.app'
 
   return {
     plugins: [

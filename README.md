@@ -105,7 +105,7 @@ cp .env.example .env
 ```
 
 ```ini
-VITE_SITE_URL=https://seu-dominio.com
+VITE_SITE_URL=https://dn-fitlog.vercel.app
 ```
 
 | Arquivo | Origem |
