@@ -1,4 +1,6 @@
 import type {
+  CardioProfile,
+  CardioSession,
   Exercise,
   LoadType,
   MuscleGroup,
@@ -100,6 +102,45 @@ export function normalizeSession(v: unknown): WorkoutSession | null {
   };
 }
 
+export function normalizeCardioSession(v: unknown): CardioSession | null {
+  if (!isRecord(v)) return null;
+  const id = str(v.id);
+  const speedKmh = num(v.speedKmh);
+  const inclinePct = num(v.inclinePct);
+  const minutes = num(v.minutes);
+  const weightKg = num(v.weightKg);
+  const kcal = num(v.kcal);
+  const avgHr = num(v.avgHr);
+  if (
+    !id ||
+    speedKmh === null ||
+    inclinePct === null ||
+    minutes === null ||
+    weightKg === null ||
+    kcal === null ||
+    avgHr === null
+  )
+    return null;
+  return {
+    id,
+    createdAt: num(v.createdAt) ?? Date.now(),
+    speedKmh,
+    inclinePct,
+    minutes,
+    weightKg,
+    kcal,
+    avgHr,
+  };
+}
+
+export function normalizeCardioProfile(v: unknown): CardioProfile | null {
+  if (!isRecord(v)) return null;
+  const weightKg = num(v.weightKg);
+  const age = num(v.age);
+  if (!weightKg || !age) return null;
+  return { weightKg, age };
+}
+
 export function normalizeList<T>(
   raw: unknown,
   normalize: (v: unknown) => T | null,
@@ -115,6 +156,8 @@ export interface BackupData {
   sets: WorkoutSet[];
   workouts: Workout[];
   sessions: WorkoutSession[];
+  cardioSessions: CardioSession[];
+  cardioProfile: CardioProfile | null;
 }
 
 interface BackupFile extends BackupData {
@@ -151,5 +194,16 @@ export function parseBackup(text: string): BackupData {
   if (!exercises || !sets || !workouts || !sessions) {
     throw new Error("O backup está incompleto ou corrompido.");
   }
-  return { exercises, sets, workouts, sessions };
+  // older backups predate the cardio tab
+  const cardioSessions =
+    normalizeList(raw.cardioSessions, normalizeCardioSession) ?? [];
+  const cardioProfile = normalizeCardioProfile(raw.cardioProfile);
+  return {
+    exercises,
+    sets,
+    workouts,
+    sessions,
+    cardioSessions,
+    cardioProfile,
+  };
 }

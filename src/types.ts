@@ -136,3 +136,21 @@ export interface WorkoutSession {
   finishedAt: number | null;
   note?: string;
 }
+
+/** Body data used by the treadmill calculator; saved so it is typed only once. */
+export interface CardioProfile {
+  weightKg: number;
+  age: number;
+}
+
+/** A treadmill session saved from the calculator, with the estimates frozen. */
+export interface CardioSession {
+  id: string;
+  createdAt: number;
+  speedKmh: number;
+  inclinePct: number;
+  minutes: number;
+  weightKg: number;
+  kcal: number;
+  avgHr: number;
+}

@@ -25,6 +25,8 @@ export function SettingsPage() {
       sets: store.sets,
       workouts: store.workouts,
       sessions: store.sessions,
+      cardioSessions: store.cardioSessions,
+      cardioProfile: store.cardioProfile,
     });
     const url = URL.createObjectURL(
       new Blob([json], { type: "application/json" }),

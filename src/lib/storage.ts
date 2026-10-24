@@ -1,6 +1,15 @@
-import type { Exercise, Workout, WorkoutSession, WorkoutSet } from "../types";
+import type {
+  CardioProfile,
+  CardioSession,
+  Exercise,
+  Workout,
+  WorkoutSession,
+  WorkoutSet,
+} from "../types";
 import { DEFAULT_EXERCISES, DEFAULT_WORKOUTS } from "./defaults";
 import {
+  normalizeCardioProfile,
+  normalizeCardioSession,
   normalizeExercise,
   normalizeList,
   normalizeSession,
@@ -13,6 +22,8 @@ export const STORAGE_KEYS = {
   sets: "treino-log:sets:v1",
   workouts: "treino-log:workouts:v1",
   sessions: "treino-log:sessions:v1",
+  cardioSessions: "treino-log:cardio-sessions:v1",
+  cardioProfile: "treino-log:cardio-profile:v1",
 } as const;
 
 export const THEME_KEY = "treino-log:theme:v1";
@@ -63,9 +74,18 @@ const MIGRATIONS: Record<number, () => void> = {
       ),
     );
   },
+  // 3: the treadmill calculator replaces the default "Esteira inclinada"
+  3: () => {
+    const list = readList(STORAGE_KEYS.exercises, normalizeExercise);
+    if (!list) return;
+    write(
+      STORAGE_KEYS.exercises,
+      list.map((e) => (e.id === "ex-esteira" ? { ...e, archived: true } : e)),
+    );
+  },
 };
 
-const CURRENT_SCHEMA = 2;
+const CURRENT_SCHEMA = 3;
 let migrated = false;
 
 function ensureMigrated() {
@@ -118,4 +138,22 @@ export function loadSessions(): WorkoutSession[] {
 
 export function saveSessions(sessions: WorkoutSession[]) {
   write(STORAGE_KEYS.sessions, sessions);
+}
+
+export function loadCardioSessions(): CardioSession[] {
+  ensureMigrated();
+  return readList(STORAGE_KEYS.cardioSessions, normalizeCardioSession) ?? [];
+}
+
+export function saveCardioSessions(sessions: CardioSession[]) {
+  write(STORAGE_KEYS.cardioSessions, sessions);
+}
+
+export function loadCardioProfile(): CardioProfile | null {
+  ensureMigrated();
+  return normalizeCardioProfile(readJson(STORAGE_KEYS.cardioProfile));
+}
+
+export function saveCardioProfile(profile: CardioProfile | null) {
+  write(STORAGE_KEYS.cardioProfile, profile);
 }

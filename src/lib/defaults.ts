@@ -41,7 +41,6 @@ export const DEFAULT_EXERCISES: Exercise[] = [
   exercise("triceps-frances", "Tríceps francês", "triceps", "plates", 21),
   exercise("abdomen-supra", "Abdominal supra", "abdomen", "bodyweight", 22),
   exercise("abdomen-infra", "Abdominal infra", "abdomen", "bodyweight", 23),
-  exercise("esteira", "Esteira inclinada", "cardio", "time", 24),
 ];
 
 const workout = (id: string, name: string, exerciseIds: string[]): Workout => ({

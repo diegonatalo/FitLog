@@ -3,6 +3,7 @@ export const paths = {
   home: "/",
   library: "/biblioteca",
   history: "/historico",
+  cardio: "/cardio",
   settings: "/ajustes",
   exercise: (id: string) => `/exercicio/${id}`,
   newWorkout: "/treino/novo",
@@ -17,6 +18,7 @@ export const patterns = {
   home: "/",
   library: "/biblioteca",
   history: "/historico",
+  cardio: "/cardio",
   settings: "/ajustes",
   exercise: "/exercicio/:id",
   newWorkout: "/treino/novo",
@@ -26,9 +28,10 @@ export const patterns = {
   sessionDetail: "/historico/:id",
 } as const;
 
-/** The three bottom-nav tabs, which are the only screens without a back button. */
+/** The bottom-nav tabs, which are the only screens without a back button. */
 export const tabPatterns: string[] = [
   patterns.home,
   patterns.library,
   patterns.history,
+  patterns.cardio,
 ];

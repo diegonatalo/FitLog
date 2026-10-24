@@ -40,6 +40,10 @@ const HEADER_RULES: {
     pattern: patterns.history,
     resolve: () => ({ title: "Histórico", subtitle: "Treinos concluídos" }),
   },
+  {
+    pattern: patterns.cardio,
+    resolve: () => ({ title: "Cardio", subtitle: "Calculadora de esteira" }),
+  },
   { pattern: patterns.settings, resolve: () => ({ title: "Ajustes" }) },
   { pattern: patterns.newWorkout, resolve: () => ({ title: "Novo treino" }) },
   {

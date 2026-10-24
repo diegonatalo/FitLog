@@ -2,6 +2,7 @@ import {
   BarbellIcon,
   ClockCounterClockwiseIcon,
   HouseIcon,
+  PersonSimpleRunIcon,
 } from "@phosphor-icons/react";
 import { NavLink } from "react-router";
 import { paths } from "../lib/paths";
@@ -11,6 +12,7 @@ const ITEMS: { to: string; label: string; icon: typeof HouseIcon }[] = [
   { to: paths.home, label: "Início", icon: HouseIcon },
   { to: paths.library, label: "Biblioteca", icon: BarbellIcon },
   { to: paths.history, label: "Histórico", icon: ClockCounterClockwiseIcon },
+  { to: paths.cardio, label: "Cardio", icon: PersonSimpleRunIcon },
 ];
 
 export function BottomNav() {

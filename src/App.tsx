@@ -5,6 +5,7 @@ import { patterns } from "./lib/paths";
 import { HomePage } from "./pages/HomePage";
 import { LibraryPage } from "./pages/LibraryPage";
 import { HistoryPage } from "./pages/HistoryPage";
+import { CardioPage } from "./pages/CardioPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { ExerciseDetail } from "./pages/ExerciseDetail";
 import { WorkoutDetail } from "./pages/WorkoutDetail";
@@ -21,6 +22,7 @@ export default function App() {
         <Route path={patterns.home} element={<HomePage />} />
         <Route path={patterns.library} element={<LibraryPage />} />
         <Route path={patterns.history} element={<HistoryPage />} />
+        <Route path={patterns.cardio} element={<CardioPage />} />
         <Route path={patterns.settings} element={<SettingsPage />} />
         <Route path={patterns.sessionDetail} element={<SessionDetail />} />
         <Route path={patterns.exercise} element={<ExerciseDetail />} />

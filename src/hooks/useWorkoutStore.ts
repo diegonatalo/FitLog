@@ -1,5 +1,7 @@
 import { useCallback, useMemo } from "react";
 import type {
+  CardioProfile,
+  CardioSession,
   Exercise,
   LoadType,
   MuscleGroup,
@@ -10,10 +12,14 @@ import type {
 import type { BackupData } from "../lib/schema";
 import {
   STORAGE_KEYS,
+  loadCardioProfile,
+  loadCardioSessions,
   loadExercises,
   loadSessions,
   loadSets,
   loadWorkouts,
+  saveCardioProfile,
+  saveCardioSessions,
   saveExercises,
   saveSessions,
   saveSets,
@@ -44,6 +50,16 @@ export function useWorkoutStore() {
     STORAGE_KEYS.sessions,
     loadSessions,
     saveSessions,
+  );
+  const [cardioSessions, setCardioSessions] = usePersistedState(
+    STORAGE_KEYS.cardioSessions,
+    loadCardioSessions,
+    saveCardioSessions,
+  );
+  const [cardioProfile, setCardioProfile] = usePersistedState(
+    STORAGE_KEYS.cardioProfile,
+    loadCardioProfile,
+    saveCardioProfile,
   );
 
   /* ---------- Exercises ---------- */
@@ -235,6 +251,26 @@ export function useWorkoutStore() {
     [setSessions, setSets],
   );
 
+  /* ---------- Cardio ---------- */
+  const addCardioSession = useCallback(
+    (data: Omit<CardioSession, "id" | "createdAt">) => {
+      const session: CardioSession = {
+        ...data,
+        id: uid(),
+        createdAt: Date.now(),
+      };
+      setCardioSessions((prev) => [session, ...prev]);
+      return session;
+    },
+    [setCardioSessions],
+  );
+
+  const removeCardioSession = useCallback(
+    (id: string) =>
+      setCardioSessions((prev) => prev.filter((s) => s.id !== id)),
+    [setCardioSessions],
+  );
+
   /* ---------- Bulk ---------- */
   const replaceAll = useCallback(
     (data: BackupData) => {
@@ -242,13 +278,29 @@ export function useWorkoutStore() {
       setSets(data.sets);
       setWorkouts(data.workouts);
       setSessions(data.sessions);
+      setCardioSessions(data.cardioSessions);
+      setCardioProfile(data.cardioProfile);
     },
-    [setExercises, setSets, setWorkouts, setSessions],
+    [
+      setExercises,
+      setSets,
+      setWorkouts,
+      setSessions,
+      setCardioSessions,
+      setCardioProfile,
+    ],
   );
 
   const clearAll = useCallback(
     () =>
-      replaceAll({ exercises: [], sets: [], workouts: [], sessions: [] }),
+      replaceAll({
+        exercises: [],
+        sets: [],
+        workouts: [],
+        sessions: [],
+        cardioSessions: [],
+        cardioProfile: null,
+      }),
     [replaceAll],
   );
 
@@ -301,6 +353,11 @@ export function useWorkoutStore() {
     setsBySession,
     activeSession,
     finishedSessions,
+    cardioSessions,
+    cardioProfile,
+    saveCardioProfile: (profile: CardioProfile) => setCardioProfile(profile),
+    addCardioSession,
+    removeCardioSession,
     addExercise,
     updateExercise,
     archiveExercise,
