@@ -1,4 +1,63 @@
-export type LoadType = "weight" | "plates";
+export type LoadType = "weight" | "plates" | "bodyweight" | "time";
+
+export interface LoadTypeMeta {
+  value: LoadType;
+  /** short label used in the toggle */
+  label: string;
+  /** label of the load input */
+  loadLabel: string;
+  /** unit shown next to a stored load */
+  unit: string;
+  /** increment of the +/- stepper */
+  step: number;
+  /** whether a load of 0 is a valid entry (e.g. bodyweight only) */
+  allowZero: boolean;
+  /** time-based exercises have no repetitions */
+  hasReps: boolean;
+}
+
+export const LOAD_TYPES: LoadTypeMeta[] = [
+  {
+    value: "weight",
+    label: "Peso",
+    loadLabel: "Peso (kg)",
+    unit: "kg",
+    step: 2.5,
+    allowZero: false,
+    hasReps: true,
+  },
+  {
+    value: "plates",
+    label: "Placas",
+    loadLabel: "Placas",
+    unit: "placas",
+    step: 1,
+    allowZero: false,
+    hasReps: true,
+  },
+  {
+    value: "bodyweight",
+    label: "Corporal",
+    loadLabel: "Carga extra (kg)",
+    unit: "kg",
+    step: 2.5,
+    allowZero: true,
+    hasReps: true,
+  },
+  {
+    value: "time",
+    label: "Tempo",
+    loadLabel: "Minutos",
+    unit: "min",
+    step: 1,
+    allowZero: false,
+    hasReps: false,
+  },
+];
+
+export function loadTypeMeta(value: LoadType): LoadTypeMeta {
+  return LOAD_TYPES.find((t) => t.value === value) ?? LOAD_TYPES[0];
+}
 
 export type MuscleGroup =
   | "peito"
@@ -40,6 +99,8 @@ export interface Exercise {
   muscleGroup: MuscleGroup;
   /** default input mode for this exercise */
   loadType: LoadType;
+  /** archived exercises keep their history but disappear from the lists */
+  archived?: boolean;
   createdAt: number;
 }
 
@@ -49,9 +110,11 @@ export interface WorkoutSet {
   /** set belongs to an active/finished session when present */
   sessionId?: string;
   loadType: LoadType;
-  /** kg when loadType === "weight", number of plates when "plates" */
+  /** see `loadTypeMeta(loadType).unit` for the unit */
   load: number;
+  /** always 1 for time-based exercises */
   reps: number;
+  note?: string;
   createdAt: number;
 }
 
@@ -71,4 +134,5 @@ export interface WorkoutSession {
   startedAt: number;
   /** null while the session is in progress */
   finishedAt: number | null;
+  note?: string;
 }

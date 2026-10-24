@@ -1,9 +1,17 @@
 import { useMemo } from "react";
-import { Outlet, matchPath, useLocation, useNavigate } from "react-router";
+import { GearSixIcon } from "@phosphor-icons/react";
+import {
+  Link,
+  Outlet,
+  matchPath,
+  useLocation,
+  useNavigate,
+} from "react-router";
 import { Header } from "./Header";
 import { BottomNav } from "./BottomNav";
-import { patterns, tabPatterns } from "../lib/paths";
-import type { Store } from "../pages/shared";
+import { patterns, paths, tabPatterns } from "../lib/paths";
+import { useStore } from "../hooks/useStore";
+import type { Store } from "../hooks/useWorkoutStore";
 
 interface HeaderInfo {
   title: string;
@@ -32,6 +40,7 @@ const HEADER_RULES: {
     pattern: patterns.history,
     resolve: () => ({ title: "Histórico", subtitle: "Treinos concluídos" }),
   },
+  { pattern: patterns.settings, resolve: () => ({ title: "Ajustes" }) },
   { pattern: patterns.newWorkout, resolve: () => ({ title: "Novo treino" }) },
   {
     pattern: patterns.editWorkout,
@@ -67,12 +76,12 @@ const HEADER_RULES: {
 ];
 
 interface LayoutProps {
-  store: Store;
   theme: "dark" | "light";
   onToggleTheme: () => void;
 }
 
-export function Layout({ store, theme, onToggleTheme }: LayoutProps) {
+export function Layout({ theme, onToggleTheme }: LayoutProps) {
+  const store = useStore();
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
@@ -98,6 +107,17 @@ export function Layout({ store, theme, onToggleTheme }: LayoutProps) {
         onBack={() => navigate(-1)}
         title={header.title}
         subtitle={header.subtitle}
+        rightSlot={
+          isTab && (
+            <Link
+              to={paths.settings}
+              aria-label="Ajustes"
+              className="grid size-9 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+            >
+              <GearSixIcon size={20} weight="bold" />
+            </Link>
+          )
+        }
       />
 
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 pb-28 pt-4">

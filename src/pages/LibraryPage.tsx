@@ -9,30 +9,39 @@ import {
 import { Link } from "react-router";
 import type { MuscleGroup } from "../types";
 import { MUSCLE_GROUPS } from "../types";
-import type { PageProps } from "./shared";
 import { EmptyState } from "../components/EmptyState";
 import { MuscleBadge } from "../components/MuscleBadge";
 import { ExerciseForm } from "../components/ExerciseForm";
 import { paths } from "../lib/paths";
-import { cn } from "../lib/format";
+import { cn, formatSet } from "../lib/format";
+import { useStore } from "../hooks/useStore";
 
-export function LibraryPage({ store }: PageProps) {
+export function LibraryPage() {
+  const store = useStore();
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<MuscleGroup | "all">("all");
+  const [filter, setFilter] = useState<MuscleGroup | "all" | "archived">(
+    "all",
+  );
   const [adding, setAdding] = useState(false);
 
+  const archivedCount = store.exercises.length - store.activeExercises.length;
+  const showingArchived = filter === "archived" && archivedCount > 0;
+
   const usedGroups = useMemo(() => {
-    const set = new Set(store.exercises.map((e) => e.muscleGroup));
+    const set = new Set(store.activeExercises.map((e) => e.muscleGroup));
     return MUSCLE_GROUPS.filter((m) => set.has(m.value));
-  }, [store.exercises]);
+  }, [store.activeExercises]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return store.exercises
-      .filter((e) => (filter === "all" ? true : e.muscleGroup === filter))
+      .filter((e) => Boolean(e.archived) === showingArchived)
+      .filter((e) =>
+        showingArchived || filter === "all" ? true : e.muscleGroup === filter,
+      )
       .filter((e) => (q ? e.name.toLowerCase().includes(q) : true))
       .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
-  }, [store.exercises, query, filter]);
+  }, [store.exercises, query, filter, showingArchived]);
 
   const hasExercises = store.exercises.length > 0;
 
@@ -77,6 +86,13 @@ export function LibraryPage({ store }: PageProps) {
                 onClick={() => setFilter(m.value)}
               />
             ))}
+            {archivedCount > 0 && (
+              <Chip
+                label={`Arquivados (${archivedCount})`}
+                active={showingArchived}
+                onClick={() => setFilter("archived")}
+              />
+            )}
           </div>
         </>
       )}
@@ -124,7 +140,7 @@ export function LibraryPage({ store }: PageProps) {
                       <span className="truncate text-xs text-muted-foreground">
                         {count === 0
                           ? "Sem registros"
-                          : `${last?.load}${ex.loadType === "weight" ? " kg" : " placas"} × ${last?.reps} · ${count} ${count === 1 ? "registro" : "registros"}`}
+                          : `${last ? formatSet(last) : ""} · ${count} ${count === 1 ? "registro" : "registros"}`}
                       </span>
                     </span>
                   </span>

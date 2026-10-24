@@ -1,12 +1,88 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+
     <title>FitLog | Monitore sua evolução</title>
+    <meta
+      name="description"
+      content="FitLog é o diário de treino que cabe no bolso: registre séries, monte treinos, bata recordes e acompanhe sua evolução na academia. Grátis, offline e sem cadastro."
+    />
+    <meta name="author" content="Diego" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="%SITE_URL%/" />
+
+    <!-- Icons & PWA -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#14161d" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="FitLog" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="FitLog" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:url" content="%SITE_URL%/" />
+    <meta property="og:title" content="FitLog | Monitore sua evolução" />
+    <meta
+      property="og:description"
+      content="Registre séries, monte treinos, bata recordes e acompanhe sua evolução na academia. Grátis, offline e sem cadastro."
+    />
+    <meta property="og:image" content="%SITE_URL%/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="FitLog: monitore sua evolução na academia"
+    />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="FitLog | Monitore sua evolução" />
+    <meta
+      name="twitter:description"
+      content="Registre séries, monte treinos, bata recordes e acompanhe sua evolução na academia."
+    />
+    <meta name="twitter:image" content="%SITE_URL%/og-image.png" />
+    <meta
+      name="twitter:image:alt"
+      content="FitLog: monitore sua evolução na academia"
+    />
+
+    <!-- Apply the saved theme before first paint to avoid a flash -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("treino-log:theme:v1");
+          var dark =
+            t === "dark" ||
+            (t !== "light" &&
+              !window.matchMedia("(prefers-color-scheme: light)").matches);
+          document.documentElement.classList.toggle("dark", dark);
+          if (!dark) {
+            document
+              .querySelector('meta[name="theme-color"]')
+              .setAttribute("content", "#f4f6f9");
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
+    <noscript>O FitLog precisa de JavaScript para funcionar.</noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

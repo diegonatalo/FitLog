@@ -7,13 +7,14 @@ import {
 } from "@phosphor-icons/react";
 import { Link, useNavigate } from "react-router";
 import type { MuscleGroup, Workout } from "../types";
-import type { PageProps } from "./shared";
 import { EmptyState } from "../components/EmptyState";
 import { MuscleBadge } from "../components/MuscleBadge";
 import { paths } from "../lib/paths";
 import { relativeDay, formatTime } from "../lib/format";
+import { useStore } from "../hooks/useStore";
 
-export function HomePage({ store }: PageProps) {
+export function HomePage() {
+  const store = useStore();
   const navigate = useNavigate();
   const { workouts, activeSession, exercises } = store;
 
@@ -127,16 +128,15 @@ export function HomePage({ store }: PageProps) {
                 <div className="border-t border-border p-2">
                   <button
                     onClick={() => start(wk)}
-                    disabled={
-                      n === 0 ||
-                      (!!activeSession && activeSession.workoutId === wk.id)
-                    }
+                    disabled={n === 0 || !!activeSession}
                     className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 font-bold text-primary-foreground transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     <PlayIcon size={18} weight="fill" />
-                    {activeSession && activeSession.workoutId === wk.id
-                      ? "Em andamento"
-                      : "Iniciar treino"}
+                    {!activeSession
+                      ? "Iniciar treino"
+                      : activeSession.workoutId === wk.id
+                        ? "Em andamento"
+                        : "Outro treino em andamento"}
                   </button>
                 </div>
               </li>

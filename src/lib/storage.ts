@@ -1,243 +1,36 @@
 import type { Exercise, Workout, WorkoutSession, WorkoutSet } from "../types";
+import { DEFAULT_EXERCISES, DEFAULT_WORKOUTS } from "./defaults";
+import {
+  normalizeExercise,
+  normalizeList,
+  normalizeSession,
+  normalizeSet,
+  normalizeWorkout,
+} from "./schema";
 
-const EXERCISES_KEY = "treino-log:exercises:v1";
-const SETS_KEY = "treino-log:sets:v1";
-const WORKOUTS_KEY = "treino-log:workouts:v1";
-const SESSIONS_KEY = "treino-log:sessions:v1";
+export const STORAGE_KEYS = {
+  exercises: "treino-log:exercises:v1",
+  sets: "treino-log:sets:v1",
+  workouts: "treino-log:workouts:v1",
+  sessions: "treino-log:sessions:v1",
+} as const;
+
 export const THEME_KEY = "treino-log:theme:v1";
+const SCHEMA_KEY = "treino-log:schema";
 
 export const uid = () =>
   Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
-const DEFAULT_EXERCISES: Exercise[] = [
-  {
-    id: "ex-supino-reto",
-    name: "Supino reto",
-    muscleGroup: "peito",
-    loadType: "weight",
-    createdAt: Date.now(),
-  },
-  {
-    id: "ex-supino-inclinado",
-    name: "Supino inclinado",
-    muscleGroup: "peito",
-    loadType: "weight",
-    createdAt: Date.now(),
-  },
-  {
-    id: "ex-voador",
-    name: "Voador",
-    muscleGroup: "peito",
-    loadType: "plates",
-    createdAt: Date.now(),
-  },
-  {
-    id: "ex-agachamento-smith",
-    name: "Agachamento no smith",
-    muscleGroup: "pernas",
-    loadType: "weight",
-    createdAt: Date.now() + 1,
-  },
-  {
-    id: "ex-leg-press-45",
-    name: "Leg press 45°",
-    muscleGroup: "pernas",
-    loadType: "weight",
-    createdAt: Date.now() + 1,
-  },
-  {
-    id: "ex-hack",
-    name: "Hack",
-    muscleGroup: "pernas",
-    loadType: "weight",
-    createdAt: Date.now() + 1,
-  },
-  {
-    id: "ex-cadeira-extensora",
-    name: "Cadeira extensora",
-    muscleGroup: "pernas",
-    loadType: "plates",
-    createdAt: Date.now() + 1,
-  },
-  {
-    id: "ex-cadeira-flexora",
-    name: "Cadeira flexora",
-    muscleGroup: "pernas",
-    loadType: "plates",
-    createdAt: Date.now() + 1,
-  },
-  {
-    id: "ex-cadeira-adutora",
-    name: "Cadeira adutora",
-    muscleGroup: "pernas",
-    loadType: "plates",
-    createdAt: Date.now() + 1,
-  },
-  {
-    id: "ex-panturrilha",
-    name: "Panturrilha",
-    muscleGroup: "pernas",
-    loadType: "plates",
-    createdAt: Date.now() + 1,
-  },
-  {
-    id: "ex-elevacao-pelvica",
-    name: "Elevação pélvica",
-    muscleGroup: "gluteos",
-    loadType: "weight",
-    createdAt: Date.now() + 1,
-  },
-  {
-    id: "ex-puxador-frente-barra",
-    name: "Puxador frente (barra)",
-    muscleGroup: "costas",
-    loadType: "plates",
-    createdAt: Date.now() + 3,
-  },
-  {
-    id: "ex-puxador-frente-triangulo",
-    name: "Puxador frente (triângulo)",
-    muscleGroup: "costas",
-    loadType: "plates",
-    createdAt: Date.now() + 3,
-  },
-  {
-    id: "ex-remada-alta",
-    name: "Remada alta",
-    muscleGroup: "costas",
-    loadType: "plates",
-    createdAt: Date.now() + 3,
-  },
-  {
-    id: "ex-remada-baixa",
-    name: "Remada baixa",
-    muscleGroup: "costas",
-    loadType: "plates",
-    createdAt: Date.now() + 3,
-  },
-  {
-    id: "ex-face-pull",
-    name: "Face pull",
-    muscleGroup: "costas",
-    loadType: "plates",
-    createdAt: Date.now() + 3,
-  },
-  {
-    id: "ex-elevacao-lateral",
-    name: "Elevação lateral",
-    muscleGroup: "ombros",
-    loadType: "plates",
-    createdAt: Date.now() + 3,
-  },
-  {
-    id: "ex-desenvolvimento-halteres",
-    name: "Desenvolvimento com halteres",
-    muscleGroup: "ombros",
-    loadType: "weight",
-    createdAt: Date.now() + 5,
-  },
-  {
-    id: "ex-rosca-direta",
-    name: "Rosca direta",
-    muscleGroup: "biceps",
-    loadType: "weight",
-    createdAt: Date.now() + 2,
-  },
-  {
-    id: "ex-rosca-scott",
-    name: "Rosca scott",
-    muscleGroup: "biceps",
-    loadType: "plates",
-    createdAt: Date.now() + 2,
-  },
-  {
-    id: "ex-triceps-corda",
-    name: "Tríceps corda",
-    muscleGroup: "triceps",
-    loadType: "plates",
-    createdAt: Date.now() + 4,
-  },
-  {
-    id: "ex-triceps-frances",
-    name: "Tríceps frânces",
-    muscleGroup: "triceps",
-    loadType: "plates",
-    createdAt: Date.now() + 4,
-  },
-  {
-    id: "ex-abdomen-supra",
-    name: "Abdominal supra",
-    muscleGroup: "abdomen",
-    loadType: "weight",
-    createdAt: Date.now() + 4,
-  },
-  {
-    id: "ex-abdomen-infra",
-    name: "Abdominal infra",
-    muscleGroup: "abdomen",
-    loadType: "weight",
-    createdAt: Date.now() + 4,
-  },
-  {
-    id: "ex-esteira",
-    name: "Esteira inclinada",
-    muscleGroup: "cardio",
-    loadType: "weight",
-    createdAt: Date.now() + 4,
-  },
-];
-
-const DEFAULT_WORKOUTS: Workout[] = [
-  {
-    id: "wk-push",
-    name: "Push",
-    exerciseIds: [
-      "ex-supino-reto",
-      "ex-voador",
-      "ex-elevacao-lateral",
-      "ex-triceps-corda",
-      "ex-triceps-frances",
-    ],
-    createdAt: Date.now(),
-  },
-  {
-    id: "wk-pull",
-    name: "Pull",
-    exerciseIds: [
-      "ex-puxador-frente-barra",
-      "ex-remada-baixa",
-      "ex-face-pull",
-      "ex-rosca-direta",
-      "ex-rosca-scott",
-    ],
-    createdAt: Date.now(),
-  },
-  {
-    id: "wk-legs",
-    name: "Legs",
-    exerciseIds: [
-      "ex-agachamento-smith",
-      "ex-elevacao-pelvica",
-      "ex-cadeira-flexora",
-      "ex-cadeira-extensora",
-      "ex-cadeira-adutora",
-      "ex-panturrilha",
-    ],
-    createdAt: Date.now(),
-  },
-];
-
-function read<T>(key: string, fallback: T): T {
+function readJson(key: string): unknown {
   try {
     const raw = localStorage.getItem(key);
-    if (!raw) return fallback;
-    return JSON.parse(raw) as T;
+    return raw ? JSON.parse(raw) : null;
   } catch {
-    return fallback;
+    return null;
   }
 }
 
-function write<T>(key: string, value: T) {
+function write(key: string, value: unknown) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
@@ -245,46 +38,84 @@ function write<T>(key: string, value: T) {
   }
 }
 
+/** Reads a list, dropping invalid entries; null when absent or not a list. */
+function readList<T>(
+  key: string,
+  normalize: (v: unknown) => T | null,
+): T[] | null {
+  return normalizeList(readJson(key), normalize);
+}
+
+/* ---------- Migrations ---------- */
+
+/** Each entry upgrades the stored data to that schema version. */
+const MIGRATIONS: Record<number, () => void> = {
+  // 2: fixes the typo in a default exercise name
+  2: () => {
+    const list = readList(STORAGE_KEYS.exercises, normalizeExercise);
+    if (!list) return;
+    write(
+      STORAGE_KEYS.exercises,
+      list.map((e) =>
+        e.id === "ex-triceps-frances" && e.name === "Tríceps frânces"
+          ? { ...e, name: "Tríceps francês" }
+          : e,
+      ),
+    );
+  },
+};
+
+const CURRENT_SCHEMA = 2;
+let migrated = false;
+
+function ensureMigrated() {
+  if (migrated) return;
+  migrated = true;
+  const stored = Number(readJson(SCHEMA_KEY)) || 1;
+  for (let v = stored + 1; v <= CURRENT_SCHEMA; v++) MIGRATIONS[v]?.();
+  if (stored < CURRENT_SCHEMA) write(SCHEMA_KEY, CURRENT_SCHEMA);
+}
+
+/* ---------- Loaders / savers ---------- */
+
 export function loadExercises(): Exercise[] {
-  const existing = read<Exercise[] | null>(EXERCISES_KEY, null);
-  if (existing && Array.isArray(existing)) {
-    // migrate older records that predate muscleGroup
-    return existing.map((e) => ({
-      ...e,
-      muscleGroup: e.muscleGroup ?? "outro",
-    }));
-  }
-  write(EXERCISES_KEY, DEFAULT_EXERCISES);
+  ensureMigrated();
+  const list = readList(STORAGE_KEYS.exercises, normalizeExercise);
+  if (list) return list;
+  write(STORAGE_KEYS.exercises, DEFAULT_EXERCISES);
   return DEFAULT_EXERCISES;
 }
 
 export function saveExercises(exercises: Exercise[]) {
-  write(EXERCISES_KEY, exercises);
+  write(STORAGE_KEYS.exercises, exercises);
 }
 
 export function loadSets(): WorkoutSet[] {
-  return read<WorkoutSet[]>(SETS_KEY, []);
+  ensureMigrated();
+  return readList(STORAGE_KEYS.sets, normalizeSet) ?? [];
 }
 
 export function saveSets(sets: WorkoutSet[]) {
-  write(SETS_KEY, sets);
+  write(STORAGE_KEYS.sets, sets);
 }
 
 export function loadWorkouts(): Workout[] {
-  const existing = read<Workout[] | null>(WORKOUTS_KEY, null);
-  if (existing && Array.isArray(existing)) return existing;
-  write(WORKOUTS_KEY, DEFAULT_WORKOUTS);
+  ensureMigrated();
+  const list = readList(STORAGE_KEYS.workouts, normalizeWorkout);
+  if (list) return list;
+  write(STORAGE_KEYS.workouts, DEFAULT_WORKOUTS);
   return DEFAULT_WORKOUTS;
 }
 
 export function saveWorkouts(workouts: Workout[]) {
-  write(WORKOUTS_KEY, workouts);
+  write(STORAGE_KEYS.workouts, workouts);
 }
 
 export function loadSessions(): WorkoutSession[] {
-  return read<WorkoutSession[]>(SESSIONS_KEY, []);
+  ensureMigrated();
+  return readList(STORAGE_KEYS.sessions, normalizeSession) ?? [];
 }
 
 export function saveSessions(sessions: WorkoutSession[]) {
-  write(SESSIONS_KEY, sessions);
+  write(STORAGE_KEYS.sessions, sessions);
 }

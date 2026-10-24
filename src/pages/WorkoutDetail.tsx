@@ -7,13 +7,14 @@ import {
   TrashIcon,
 } from "@phosphor-icons/react";
 import { Link, Navigate, useNavigate, useParams } from "react-router";
-import type { PageProps } from "./shared";
 import { paths } from "../lib/paths";
+import { useStore } from "../hooks/useStore";
 import { MuscleBadge } from "../components/MuscleBadge";
 import { EmptyState } from "../components/EmptyState";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 
-export function WorkoutDetail({ store }: PageProps) {
+export function WorkoutDetail() {
+  const store = useStore();
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const workout = store.workouts.find((w) => w.id === id);
@@ -23,7 +24,7 @@ export function WorkoutDetail({ store }: PageProps) {
 
   const exercises = workout.exerciseIds
     .map((id) => store.exercises.find((e) => e.id === id))
-    .filter((e): e is NonNullable<typeof e> => Boolean(e));
+    .filter((e): e is NonNullable<typeof e> => Boolean(e) && !e?.archived);
 
   const activeHere =
     store.activeSession && store.activeSession.workoutId === workout.id;
@@ -110,11 +111,15 @@ export function WorkoutDetail({ store }: PageProps) {
 
       <button
         onClick={start}
-        disabled={exercises.length === 0}
+        disabled={exercises.length === 0 && !store.activeSession}
         className="sticky bottom-4 flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-4 text-base font-bold text-primary-foreground shadow-lg transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
       >
         <PlayIcon size={20} weight="fill" />
-        {activeHere ? "Continuar treino" : "Iniciar treino"}
+        {activeHere
+          ? "Continuar treino"
+          : store.activeSession
+            ? "Voltar ao treino em andamento"
+            : "Iniciar treino"}
       </button>
 
       {confirmDelete && (

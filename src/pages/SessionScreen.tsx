@@ -1,50 +1,76 @@
 import { useState } from "react";
-import { CheckCircleIcon, PlusIcon, TrashIcon } from "@phosphor-icons/react";
-import type { Exercise, LoadType, WorkoutSet } from "../types";
-import type { PageProps } from "./shared";
-import { MuscleBadge } from "../components/MuscleBadge";
-import { LogForm } from "../components/LogForm";
+import { Navigate, useNavigate, useParams } from "react-router";
+import { BarbellIcon, CheckCircleIcon } from "@phosphor-icons/react";
+import type { Exercise } from "../types";
+import { paths } from "../lib/paths";
+import { formatClock } from "../lib/format";
+import { isNewRecord } from "../lib/stats";
+import { useStore } from "../hooks/useStore";
+import { useNow } from "../hooks/useNow";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { EmptyState } from "../components/EmptyState";
-import { BarbellIcon } from "@phosphor-icons/react";
-import { paths } from "../lib/paths";
-import { useNavigate, useParams } from "react-router";
+import { RestTimer } from "../components/RestTimer";
+import { SessionExerciseCard } from "../components/SessionExerciseCard";
 
-export function SessionScreen({ store }: PageProps) {
+export function SessionScreen() {
+  const store = useStore();
   const { id = "" } = useParams();
   const navigate = useNavigate();
-  const session = store.sessions.find((s) => s.id === id);
+  const now = useNow(1000);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
+  const [restStartedAt, setRestStartedAt] = useState<number | null>(null);
 
-  if (!session) return null;
+  const session = store.sessions.find((s) => s.id === id);
+  if (!session) return <Navigate to={paths.home} replace />;
+  if (session.finishedAt !== null) {
+    return <Navigate to={paths.sessionDetail(session.id)} replace />;
+  }
 
   const workout = session.workoutId
     ? store.workouts.find((w) => w.id === session.workoutId)
     : null;
   const exercises = (workout?.exerciseIds ?? [])
-    .map((id) => store.exercises.find((e) => e.id === id))
-    .filter((e): e is Exercise => Boolean(e));
+    .map((exId) => store.exercises.find((e) => e.id === exId))
+    .filter((e): e is Exercise => Boolean(e) && !e?.archived);
 
   const sessionSets = store.setsBySession.get(session.id) ?? [];
   const totalSets = sessionSets.length;
 
   const finish = () => {
     store.finishSession(session.id);
-    navigate(paths.history, { replace: true });
+    navigate(paths.sessionDetail(session.id), { replace: true });
   };
 
   return (
     <div className="flex flex-col gap-4 pb-24">
       <div className="rounded-2xl border border-accent/40 bg-accent/10 p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-accent">
-          Sessão ativa
-        </p>
-        <p className="mt-0.5 text-lg font-bold">{session.name}</p>
-        <p className="text-sm text-muted-foreground">
-          {totalSets}{" "}
-          {totalSets === 1 ? "série registrada" : "séries registradas"}
-        </p>
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-wide text-accent">
+              Sessão ativa
+            </p>
+            <p className="mt-0.5 truncate text-lg font-bold">{session.name}</p>
+            <p className="text-sm text-muted-foreground">
+              {totalSets}{" "}
+              {totalSets === 1 ? "série registrada" : "séries registradas"}
+            </p>
+          </div>
+          <p
+            className="font-mono text-2xl font-bold tabular-nums"
+            aria-label="Tempo de treino"
+          >
+            {formatClock((now - session.startedAt) / 1000)}
+          </p>
+        </div>
       </div>
+
+      {restStartedAt !== null && (
+        <RestTimer
+          key={restStartedAt}
+          startedAt={restStartedAt}
+          onDismiss={() => setRestStartedAt(null)}
+        />
+      )}
 
       {exercises.length === 0 ? (
         <EmptyState
@@ -59,14 +85,43 @@ export function SessionScreen({ store }: PageProps) {
               key={ex.id}
               exercise={ex}
               sets={sessionSets.filter((s) => s.exerciseId === ex.id)}
-              onAddSet={(loadType, load, reps) =>
-                store.addSet(ex.id, loadType, load, reps, session.id)
-              }
+              history={store.setsByExercise.get(ex.id) ?? []}
+              onAddSet={(loadType, load, reps) => {
+                const record = isNewRecord(
+                  store.setsByExercise.get(ex.id) ?? [],
+                  loadType,
+                  load,
+                );
+                store.addSet(ex.id, loadType, load, reps, session.id);
+                setRestStartedAt(Date.now());
+                return record;
+              }}
+              onUpdateSet={store.updateSet}
               onRemoveSet={store.removeSet}
             />
           ))}
         </ul>
       )}
+
+      <div>
+        <label
+          htmlFor="session-note"
+          className="mb-1.5 block text-xs font-medium text-muted-foreground"
+        >
+          Observações do treino (opcional)
+        </label>
+        <textarea
+          id="session-note"
+          value={session.note ?? ""}
+          onChange={(e) =>
+            store.updateSession(session.id, { note: e.target.value })
+          }
+          rows={2}
+          maxLength={500}
+          placeholder="Como foi o treino? Dores, energia, sono..."
+          className="w-full resize-none rounded-xl border border-input bg-background px-4 py-3 text-base outline-none focus:border-accent focus:ring-2 focus:ring-ring/40"
+        />
+      </div>
 
       <button
         onClick={finish}
@@ -97,87 +152,5 @@ export function SessionScreen({ store }: PageProps) {
         />
       )}
     </div>
-  );
-}
-
-interface CardProps {
-  exercise: Exercise;
-  sets: WorkoutSet[];
-  onAddSet: (loadType: LoadType, load: number, reps: number) => void;
-  onRemoveSet: (id: string) => void;
-}
-
-function SessionExerciseCard({
-  exercise,
-  sets,
-  onAddSet,
-  onRemoveSet,
-}: CardProps) {
-  const [open, setOpen] = useState(false);
-  const ordered = [...sets].sort((a, b) => a.createdAt - b.createdAt);
-
-  return (
-    <li className="overflow-hidden rounded-2xl border border-border bg-card">
-      <div className="flex items-center gap-3 p-4">
-        <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-muted">
-          <BarbellIcon size={18} weight="fill" />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block truncate font-semibold">{exercise.name}</span>
-          <span className="text-xs text-muted-foreground">
-            {sets.length} {sets.length === 1 ? "série" : "séries"}
-          </span>
-        </span>
-        <MuscleBadge group={exercise.muscleGroup} />
-      </div>
-
-      {ordered.length > 0 && (
-        <ol className="flex flex-col gap-1.5 px-4 pb-3">
-          {ordered.map((s, i) => (
-            <li
-              key={s.id}
-              className="flex items-center gap-3 rounded-lg bg-muted/60 px-3 py-2 text-sm"
-            >
-              <span className="grid size-6 place-items-center rounded-md bg-background font-mono text-xs font-bold">
-                {i + 1}
-              </span>
-              <span className="flex-1 font-mono font-semibold">
-                {s.load}
-                <span className="font-sans font-normal text-muted-foreground">
-                  {s.loadType === "weight" ? " kg" : " placas"}
-                </span>{" "}
-                × {s.reps}
-              </span>
-              <button
-                onClick={() => onRemoveSet(s.id)}
-                aria-label="Remover série"
-                className="grid size-7 place-items-center rounded-md text-muted-foreground hover:text-destructive"
-              >
-                <TrashIcon size={15} />
-              </button>
-            </li>
-          ))}
-        </ol>
-      )}
-
-      {open ? (
-        <div className="border-t border-border p-3">
-          <LogForm
-            defaultLoadType={exercise.loadType}
-            justSaved={false}
-            onSave={(loadType, load, reps) => {
-              onAddSet(loadType, load, reps);
-            }}
-          />
-        </div>
-      ) : (
-        <button
-          onClick={() => setOpen(true)}
-          className="flex w-full items-center justify-center gap-2 border-t border-border py-3 text-sm font-semibold text-accent hover:bg-accent/5"
-        >
-          <PlusIcon size={18} weight="bold" /> Registrar série
-        </button>
-      )}
-    </li>
   );
 }

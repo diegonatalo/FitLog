@@ -1,41 +1,64 @@
-import { useMemo, useState } from "react";
-import { PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
+import { useState } from "react";
+import {
+  ArchiveIcon,
+  ArrowCounterClockwiseIcon,
+  PencilSimpleIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
 import { Navigate, useNavigate, useParams } from "react-router";
-import type { LoadType } from "../types";
+import type { LoadType, WorkoutSet } from "../types";
+import { loadTypeMeta } from "../types";
 import { paths } from "../lib/paths";
+import { formatLoad } from "../lib/format";
+import { bestSet, estimateOneRepMax, isNewRecord } from "../lib/stats";
+import { useStore } from "../hooks/useStore";
 import { MuscleBadge } from "../components/MuscleBadge";
 import { ExerciseForm } from "../components/ExerciseForm";
 import { LogForm } from "../components/LogForm";
 import { HistoryList } from "../components/HistoryList";
+import { ProgressChart } from "../components/ProgressChart";
 import { ConfirmDialog } from "../components/ConfirmDialog";
-import type { PageProps } from "./shared";
 
-export function ExerciseDetail({ store }: PageProps) {
+const NO_SETS: WorkoutSet[] = [];
+
+export function ExerciseDetail() {
+  const store = useStore();
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const exercise = store.exercises.find((e) => e.id === id);
-  const sets = store.setsByExercise.get(id) ?? [];
-  const [justSaved, setJustSaved] = useState(false);
+  const sets = store.setsByExercise.get(id) ?? NO_SETS;
   const [editing, setEditing] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(false);
-
-  const best = useMemo(() => {
-    if (sets.length === 0) return null;
-    return sets.reduce((max, s) => (s.load > max.load ? s : max), sets[0]);
-  }, [sets]);
+  const [confirm, setConfirm] = useState<"archive" | "delete" | null>(null);
 
   if (!exercise) return <Navigate to={paths.library} replace />;
 
+  const archived = exercise.archived === true;
+  const hasHistory = sets.length > 0;
+  const best = bestSet(sets, exercise.loadType);
+  const meta = loadTypeMeta(exercise.loadType);
+  const oneRepMax =
+    best && exercise.loadType === "weight"
+      ? estimateOneRepMax(best.load, best.reps)
+      : null;
+  const last = sets[0];
+
   const handleSave = (loadType: LoadType, load: number, reps: number) => {
+    const record = isNewRecord(sets, loadType, load);
     store.addSet(exercise.id, loadType, load, reps);
-    setJustSaved(true);
-    window.setTimeout(() => setJustSaved(false), 1200);
+    return record;
   };
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-3">
-        <MuscleBadge group={exercise.muscleGroup} size="md" />
+        <span className="flex items-center gap-2">
+          <MuscleBadge group={exercise.muscleGroup} size="md" />
+          {archived && (
+            <span className="rounded-full border border-border px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Arquivado
+            </span>
+          )}
+        </span>
         <div className="flex gap-2">
           <button
             onClick={() => setEditing(true)}
@@ -43,13 +66,32 @@ export function ExerciseDetail({ store }: PageProps) {
           >
             <PencilSimpleIcon size={16} weight="bold" /> Editar
           </button>
-          <button
-            onClick={() => setConfirmDelete(true)}
-            aria-label="Excluir exercício"
-            className="grid size-9 place-items-center rounded-lg border border-border bg-card text-muted-foreground hover:border-destructive/40 hover:text-destructive"
-          >
-            <TrashIcon size={16} />
-          </button>
+          {archived ? (
+            <>
+              <button
+                onClick={() => store.restoreExercise(exercise.id)}
+                aria-label="Restaurar exercício"
+                className="grid size-9 place-items-center rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground"
+              >
+                <ArrowCounterClockwiseIcon size={16} weight="bold" />
+              </button>
+              <button
+                onClick={() => setConfirm("delete")}
+                aria-label="Excluir definitivamente"
+                className="grid size-9 place-items-center rounded-lg border border-border bg-card text-muted-foreground hover:border-destructive/40 hover:text-destructive"
+              >
+                <TrashIcon size={16} />
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setConfirm(hasHistory ? "archive" : "delete")}
+              aria-label={hasHistory ? "Arquivar exercício" : "Excluir exercício"}
+              className="grid size-9 place-items-center rounded-lg border border-border bg-card text-muted-foreground hover:border-destructive/40 hover:text-destructive"
+            >
+              {hasHistory ? <ArchiveIcon size={16} /> : <TrashIcon size={16} />}
+            </button>
+          )}
         </div>
       </div>
 
@@ -57,22 +99,39 @@ export function ExerciseDetail({ store }: PageProps) {
         <StatCard label="Registros" value={String(sets.length)} />
         <StatCard
           label="Recorde"
-          value={
-            best
-              ? `${best.load}${exercise.loadType === "weight" ? " kg" : "×"}`
-              : "—"
-          }
-          sub={best ? `${best.reps} reps` : undefined}
+          value={best ? formatLoad(best.loadType, best.load) : "—"}
+          sub={best && meta.hasReps ? `${best.reps} reps` : undefined}
         />
+        {oneRepMax !== null && (
+          <StatCard
+            label="1RM estimado"
+            value={formatLoad("weight", oneRepMax)}
+            className="col-span-2"
+          />
+        )}
       </section>
 
-      <LogForm
-        defaultLoadType={exercise.loadType}
-        onSave={handleSave}
-        justSaved={justSaved}
-      />
+      {!archived && (
+        <LogForm
+          defaultLoadType={exercise.loadType}
+          suggestion={
+            last && {
+              loadType: last.loadType,
+              load: last.load,
+              reps: last.reps,
+            }
+          }
+          onSave={handleSave}
+        />
+      )}
 
-      <HistoryList sets={sets} onRemoveSet={store.removeSet} />
+      <ProgressChart sets={sets} loadType={exercise.loadType} />
+
+      <HistoryList
+        sets={sets}
+        onRemoveSet={store.removeSet}
+        onUpdateSet={store.updateSet}
+      />
 
       {editing && (
         <ExerciseForm
@@ -85,17 +144,35 @@ export function ExerciseDetail({ store }: PageProps) {
         />
       )}
 
-      {confirmDelete && (
+      {confirm === "archive" && (
+        <ConfirmDialog
+          title="Arquivar exercício?"
+          description={`"${exercise.name}" some da biblioteca e dos novos treinos, mas o histórico de ${sets.length} ${sets.length === 1 ? "registro é mantido" : "registros é mantido"}. Você pode restaurá-lo depois.`}
+          confirmLabel="Arquivar"
+          onCancelLabel="Cancelar"
+          onConfirm={() => {
+            store.archiveExercise(exercise.id);
+            navigate(paths.library, { replace: true });
+          }}
+          onCancel={() => setConfirm(null)}
+        />
+      )}
+
+      {confirm === "delete" && (
         <ConfirmDialog
           title="Excluir exercício?"
-          description={`"${exercise.name}" e todos os seus registros serão removidos. Essa ação não pode ser desfeita.`}
+          description={
+            hasHistory
+              ? `"${exercise.name}" e todos os seus registros serão apagados, inclusive das sessões do histórico. Essa ação não pode ser desfeita.`
+              : `"${exercise.name}" será removido da biblioteca e dos treinos.`
+          }
           confirmLabel="Excluir"
           onCancelLabel="Cancelar"
           onConfirm={() => {
             store.removeExercise(exercise.id);
             navigate(paths.library, { replace: true });
           }}
-          onCancel={() => setConfirmDelete(false)}
+          onCancel={() => setConfirm(null)}
         />
       )}
     </div>
@@ -106,13 +183,17 @@ function StatCard({
   label,
   value,
   sub,
+  className = "",
 }: {
   label: string;
   value: string;
   sub?: string;
+  className?: string;
 }) {
   return (
-    <div className="flex flex-col rounded-xl border border-border bg-card p-4">
+    <div
+      className={`flex flex-col rounded-xl border border-border bg-card p-4 ${className}`}
+    >
       <p className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">
         {label}
       </p>
