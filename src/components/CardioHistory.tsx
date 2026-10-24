@@ -4,7 +4,7 @@ import { Link } from "react-router";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { EmptyState } from "./EmptyState";
 import { paths } from "../lib/paths";
-import { formatDate, formatTime, relativeDay } from "../lib/format";
+import { formatTime, relativeDay } from "../lib/format";
 import { useStore } from "../hooks/useStore";
 
 export function CardioHistory() {
@@ -47,9 +47,9 @@ export function CardioHistory() {
           >
             <span className="min-w-0 flex-1">
               <span className="block text-sm font-bold">
-                <span className="capitalize">{relativeDay(s.createdAt)}</span>{" "}
+                {relativeDay(s.createdAt)}{" "}
                 <span className="font-normal text-muted-foreground">
-                  · {formatDate(s.createdAt)} {formatTime(s.createdAt)}
+                  · {formatTime(s.createdAt)}
                 </span>
               </span>
               <span className="block font-mono text-xs text-muted-foreground">

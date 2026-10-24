@@ -92,7 +92,7 @@ function WorkoutHistory() {
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-bold">{s.name}</span>
                 <span className="block text-xs text-muted-foreground">
-                  <span className="capitalize">{relativeDay(s.startedAt)}</span>{" "}
+                  {relativeDay(s.startedAt)}{" "}
                   · {formatTime(s.startedAt)}
                   {s.finishedAt
                     ? ` · ${formatDuration(s.startedAt, s.finishedAt)}`

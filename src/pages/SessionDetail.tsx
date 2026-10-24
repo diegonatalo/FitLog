@@ -50,7 +50,7 @@ export function SessionDetail() {
 
       <p className="mb-4 flex items-center gap-1.5 text-sm text-muted-foreground">
         <ClockCounterClockwiseIcon size={16} weight="bold" />
-        <span className="capitalize">{relativeDay(session.startedAt)}</span> ·{" "}
+        {relativeDay(session.startedAt)} ·{" "}
         {formatTime(session.startedAt)}
       </p>
 
