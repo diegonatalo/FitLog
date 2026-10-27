@@ -1,0 +1,46 @@
+{
+  "repo": "FitLog",
+  "name": "FitLog",
+  "tagline": "O diário de treino que cabe no bolso.",
+  "year": 2026,
+  "author": "Diego Natalo",
+  "footer_line": "Feito com 💚 para treinar sem planilha.",
+  "buttons": [
+    {"file": "btn-demo.svg", "label": "Abrir o app", "primary": true},
+    {"file": "btn-code.svg", "label": "Código"}
+  ],
+  "author_buttons": [
+    {"file": "btn-portfolio.svg", "label": "Portfólio"},
+    {"file": "btn-linkedin.svg", "label": "LinkedIn"},
+    {"file": "btn-github.svg", "label": "GitHub"}
+  ],
+  "sections": [
+    {"id": "sobre", "tag": "SOBRE", "title": "Sobre o projeto"},
+    {"id": "demo", "tag": "DEMO", "title": "Telas"},
+    {"id": "funcionalidades", "tag": "FUNCIONALIDADES", "title": "O que dá para fazer"},
+    {"id": "stack", "tag": "STACK", "title": "Stack"},
+    {"id": "como-rodar", "tag": "COMO RODAR", "title": "Rodando localmente"},
+    {"id": "estrutura", "tag": "ESTRUTURA", "title": "Estrutura"},
+    {"id": "mais", "tag": "MAIS", "title": "Mais informações"},
+    {"id": "autor", "tag": "AUTOR", "title": "Autor"}
+  ],
+  "features": [
+    ["Treinos prontos", "Agrupe exercícios em treinos (Push, Pull, Legs…), defina a ordem e inicie tudo com um toque."],
+    ["Sessão ao vivo", "Cronômetro do treino, séries por exercício e observações da sessão e de cada série."],
+    ["Timer de descanso", "Contagem regressiva de 60, 90, 120 ou 180 s depois de cada série, com vibração ao terminar."],
+    ["Carga sugerida", "A última série do exercício já vem preenchida, então você só ajusta o que mudou."],
+    ["Quatro tipos de carga", "Peso (kg), placas, peso corporal (com carga extra opcional) e tempo, para exercícios cronometrados."],
+    ["Calculadora de cardio", "Informe velocidade, inclinação e duração na esteira e veja calorias e frequência cardíaca estimadas, a zona de esforço e dicas para a intensidade."],
+    ["Comparador de esteira", "Gráfico com as curvas de 0%, 6%, 12% e 18% de inclinação (e a sua), em calorias ou frequência cardíaca, para ver o efeito de mudar velocidade ou inclinação."],
+    ["Perfil", "Peso, idade e sexo ficam salvos em Ajustes e alimentam as estimativas do cardio."],
+    ["Recordes e evolução", "Aviso na hora de um novo recorde, marca de PR no histórico, 1RM estimado e gráfico da melhor carga por dia."],
+    ["Biblioteca", "Busca, filtro por grupo muscular e 24 exercícios de exemplo. Exercícios com histórico são arquivados, não apagados."],
+    ["Histórico de sessões", "Duração, séries e anotações de cada treino concluído, com edição de qualquer série. Um seletor alterna entre Treinos e Cardio."]
+  ],
+  "stack": ["React 19", "TypeScript 6", "Vite 8", "Tailwind CSS 4", "PWA", "React Router 8", "Phosphor Icons", "React Compiler"],
+  "shots": [
+    ["inicio", "Treinos"], ["sessao", "Sessão ao vivo"], ["exercicio", "Evolução do exercício"],
+    ["biblioteca", "Biblioteca"], ["historico", "Histórico de treinos"], ["historico-cardio", "Histórico de cardio"],
+    ["cardio", "Calculadora de cardio"], ["cardio-grafico", "Comparador e dicas"], ["ajustes", "Ajustes e perfil"]
+  ]
+}
